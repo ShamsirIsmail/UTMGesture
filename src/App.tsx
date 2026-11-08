@@ -16,6 +16,7 @@ import { CompleteScreen } from './screens/CompleteScreen';
 import { LeaderboardScreen } from './screens/LeaderboardScreen';
 import { VoiceCaptionBanner } from './components/VoiceCaptionBanner';
 import { sfx } from './services/audioEngine';
+import { voice } from './services/voiceGuidance';
 import { createHandLandmarker, isHandLandmarkerReady, detectHand } from './services/mediapipe';
 import type { ScreenState, ControlMode, DifficultyLevel, LandmarkPoint } from './types';
 
@@ -27,7 +28,8 @@ function AppContent() {
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('CASUAL');
 
   // UI & Operator Controls
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [sfxEnabled, setSfxEnabled] = useState(() => sfx.enabled);
+  const [voiceEnabled, setVoiceEnabled] = useState(() => voice.enabled);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
   const [submissionsEnabled, setSubmissionsEnabled] = useState(true);
@@ -49,12 +51,22 @@ function AppContent() {
   const streamRef = useRef<MediaStream | null>(null);
   const calibrationVideoRef = useRef<HTMLVideoElement>(null);
 
-  // Toggle Sound
-  const toggleSound = useCallback(() => {
-    setSoundEnabled((prev) => {
+  // Toggle SFX
+  const toggleSfx = useCallback(() => {
+    setSfxEnabled((prev) => {
       const next = !prev;
-      sfx.enabled = next;
+      sfx.setEnabled(next);
       if (next) sfx.playClick();
+      return next;
+    });
+  }, []);
+
+  // Toggle Voice Narration
+  const toggleVoice = useCallback(() => {
+    setVoiceEnabled((prev) => {
+      const next = !prev;
+      voice.setEnabled(next);
+      sfx.playClick();
       return next;
     });
   }, []);
@@ -273,7 +285,11 @@ function AppContent() {
           break;
         case 's':
         case 'S':
-          toggleSound();
+          toggleSfx();
+          break;
+        case 'v':
+        case 'V':
+          toggleVoice();
           break;
         case 'o':
         case 'O':
@@ -293,7 +309,8 @@ function AppContent() {
     goHome,
     startGame,
     toggleFullscreen,
-    toggleSound,
+    toggleSfx,
+    toggleVoice,
     initializeCameraAndModel,
   ]);
 
@@ -308,7 +325,8 @@ function AppContent() {
         screen={screen}
         difficulty={difficulty}
         controlMode={controlMode}
-        soundEnabled={soundEnabled}
+        sfxEnabled={sfxEnabled}
+        voiceEnabled={voiceEnabled}
         isFullscreen={isFullscreen}
         onSelectDifficulty={selectDifficulty}
         onSwitchToCamera={() => {
@@ -323,7 +341,8 @@ function AppContent() {
           setControlMode('MOUSE');
           setHandDetected(true);
         }}
-        onToggleSound={toggleSound}
+        onToggleSfx={toggleSfx}
+        onToggleVoice={toggleVoice}
         onToggleFullscreen={toggleFullscreen}
         onGoHome={goHome}
         onOpenLeaderboard={openLeaderboard}

@@ -72,8 +72,12 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
   const [newPin, setNewPin] = useState('');
   const [pinChangeSuccess, setPinChangeSuccess] = useState(false);
 
-  // Voice diagnostics
+  // Voice & SFX diagnostics and controls
   const [installedVoices, setInstalledVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [modalSfxEnabled, setModalSfxEnabled] = useState(() => sfx.enabled);
+  const [modalSfxVolume, setModalSfxVolume] = useState(() => Math.round(sfx.volume * 100));
+  const [modalVoiceEnabled, setModalVoiceEnabled] = useState(() => voice.enabled);
+  const [modalVoiceVolume, setModalVoiceVolume] = useState(() => Math.round(voice.volume * 100));
 
   const loadData = async () => {
     try {
@@ -89,6 +93,10 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
   useEffect(() => {
     if (isOpen && isAuthenticated) {
       loadData();
+      setModalSfxEnabled(sfx.enabled);
+      setModalSfxVolume(Math.round(sfx.volume * 100));
+      setModalVoiceEnabled(voice.enabled);
+      setModalVoiceVolume(Math.round(voice.volume * 100));
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         setInstalledVoices(voice.getAvailableVoices());
       }
@@ -293,27 +301,127 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
               </button>
             </div>
 
-            {/* Voice Guidance Test & Installed Voices */}
-            <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-2">
-              <div className="flex items-center justify-between">
+            {/* Audio & Voice Guidance Management */}
+            <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-4">
+              <div className="flex items-center justify-between border-b border-stone-200 pb-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-stone-900">
                   <Volume2 className="w-4 h-4 text-[#7a1636]" />
-                  <span>Sistem Suara Dwibahasa (Luar Talian)</span>
+                  <span>Kawalan Audio & Suara Panduan Acara</span>
                 </div>
-                <button
-                  onClick={() => {
-                    voice.speak('WELCOME', language, 0);
-                  }}
-                  className="px-3 py-1 rounded-full bg-[#7a1636] text-white text-[11px] font-bold cursor-pointer hover:bg-[#62102b] transition-colors"
-                >
-                  Uji Suara ({language.toUpperCase()})
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => {
+                      voice.speakWelcome('bm');
+                    }}
+                    className="px-2.5 py-1 rounded-full bg-[#7a1636] text-white text-[10px] font-bold cursor-pointer hover:bg-[#62102b] transition-colors"
+                  >
+                    Uji BM
+                  </button>
+                  <button
+                    onClick={() => {
+                      voice.speakWelcome('en');
+                    }}
+                    className="px-2.5 py-1 rounded-full bg-stone-800 text-white text-[10px] font-bold cursor-pointer hover:bg-stone-700 transition-colors"
+                  >
+                    Uji EN
+                  </button>
+                </div>
               </div>
-              <div className="text-[11px] text-stone-600">
-                Status Enjin: <span className="font-bold text-emerald-700">Web Speech API Tersedia</span> | Bahasa Aktif: <span className="font-bold uppercase text-[#7a1636]">{language}</span>
+
+              {/* SFX Control Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-stone-200">
+                  <span className="text-xs font-semibold text-stone-800">Kesan Bunyi (SFX)</span>
+                  <button
+                    onClick={() => {
+                      const next = !modalSfxEnabled;
+                      setModalSfxEnabled(next);
+                      sfx.setEnabled(next);
+                      if (next) sfx.playClick();
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-bold cursor-pointer transition-colors ${
+                      modalSfxEnabled
+                        ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                        : 'bg-stone-100 text-stone-500 border border-stone-300'
+                    }`}
+                  >
+                    {modalSfxEnabled ? 'AKTIF' : 'SENYAP'}
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-stone-200">
+                  <span className="text-[11px] font-medium text-stone-500 w-16">Volum SFX:</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={modalSfxVolume}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      setModalSfxVolume(val);
+                      sfx.setVolume(val / 100);
+                    }}
+                    className="flex-1 accent-[#7a1636] cursor-pointer"
+                  />
+                  <span className="text-xs font-mono font-bold text-stone-700 w-8 text-right">
+                    {modalSfxVolume}%
+                  </span>
+                </div>
               </div>
-              <div className="text-[10px] text-stone-500">
-                Suara Dipasang Pada Komputer: {installedVoices.length > 0 ? `${installedVoices.length} suara ditemui` : 'Mengimbas suara sistem...'}
+
+              {/* Voice Narration Control Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-stone-200">
+                  <span className="text-xs font-semibold text-stone-800">Suara Panduan (TTS)</span>
+                  <button
+                    onClick={() => {
+                      const next = !modalVoiceEnabled;
+                      setModalVoiceEnabled(next);
+                      voice.setEnabled(next);
+                      sfx.playClick();
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-bold cursor-pointer transition-colors ${
+                      modalVoiceEnabled
+                        ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                        : 'bg-stone-100 text-stone-500 border border-stone-300'
+                    }`}
+                  >
+                    {modalVoiceEnabled ? 'AKTIF' : 'SENYAP'}
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-stone-200">
+                  <span className="text-[11px] font-medium text-stone-500 w-16">Volum Suara:</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={modalVoiceVolume}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      setModalVoiceVolume(val);
+                      voice.setVolume(val / 100);
+                    }}
+                    className="flex-1 accent-emerald-600 cursor-pointer"
+                  />
+                  <span className="text-xs font-mono font-bold text-stone-700 w-8 text-right">
+                    {modalVoiceVolume}%
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[11px] text-stone-600 flex flex-wrap items-center justify-between gap-1 pt-1">
+                <span>
+                  Suara Melayu Tempatan:{' '}
+                  {voice.hasNativeMalayVoice() ? (
+                    <span className="font-bold text-emerald-700">Tersedia (Pertuturan Asli)</span>
+                  ) : (
+                    <span className="font-bold text-amber-700">Tiada (Mod Perlindungan: Teks Sahaja)</span>
+                  )}
+                </span>
+                <span className="text-[10px] text-stone-400">
+                  {installedVoices.length} suara sistem dikesan
+                </span>
               </div>
             </div>
 

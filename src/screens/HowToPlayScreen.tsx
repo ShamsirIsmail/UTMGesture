@@ -144,7 +144,7 @@ export const HowToPlayScreen: React.FC<HowToPlayScreenProps> = ({
               sfx.playClick();
               onStartGame();
             }}
-            className="inline-flex items-center justify-center gap-2.5 px-10 py-3.5 rounded-full bg-[#7a1636] text-white font-bold text-base shadow-exhibition hover:bg-[#62102b] hover:scale-102 active:scale-98 transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2.5 px-10 py-3.5 rounded-2xl bg-[#7a1636] text-white font-black text-base shadow-exhibition hover:bg-[#62102b] hover:scale-102 active:scale-98 transition-all cursor-pointer"
           >
             <Play className="w-5 h-5 fill-white" />
             <span>

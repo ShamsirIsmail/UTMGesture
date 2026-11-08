@@ -232,7 +232,7 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
               sfx.playClick();
               onPlayAgain();
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#7a1636] text-white font-bold text-sm shadow hover:bg-[#62102b] transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#7a1636] text-white font-black text-sm shadow hover:bg-[#62102b] transition-all cursor-pointer"
           >
             <RotateCcw className="w-4 h-4" />
             <span>{t('playAgain')}</span>
@@ -243,7 +243,7 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
               sfx.playClick();
               onOpenLeaderboard();
             }}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white hover:bg-amber-50 border border-amber-300 text-amber-900 font-bold text-sm shadow-xs transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white hover:bg-amber-50 border border-amber-300 text-amber-900 font-bold text-sm shadow-xs transition-all cursor-pointer"
           >
             <Trophy className="w-4 h-4 text-amber-600" />
             <span>{t('viewLeaderboard')}</span>
@@ -254,7 +254,7 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
               sfx.playClick();
               onHome();
             }}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-sm transition-colors cursor-pointer"
           >
             <Home className="w-4 h-4 text-stone-500" />
             <span>{t('home')}</span>

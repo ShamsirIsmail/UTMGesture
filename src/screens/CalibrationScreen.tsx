@@ -41,10 +41,14 @@ export const CalibrationScreen: React.FC<CalibrationScreenProps> = ({
   const [step, setStep] = useState<CalibrationStep>('REQUESTING');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Voice guidance on calibration start
+  // Voice guidance on calibration start (once per calibration entry)
   useEffect(() => {
-    voice.speak('CALIBRATION', language, 1200);
-  }, []);
+    voice.resetCalibration();
+    const timer = setTimeout(() => {
+      voice.speakCalibration(language);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [language]);
 
   // Derive step from tracking states
   useEffect(() => {
@@ -53,7 +57,7 @@ export const CalibrationScreen: React.FC<CalibrationScreenProps> = ({
     else if (cameraStatus === 'READY' && modelLoaded && !handDetected) setStep('LOOKING');
     else if (cameraStatus === 'READY' && modelLoaded && handDetected) {
       setStep('DETECTED');
-      voice.speak('HAND_DETECTED', language, 2000);
+      voice.speakHandDetected(language);
       const timer = setTimeout(() => setStep('READY'), 1200);
       return () => clearTimeout(timer);
     }
@@ -186,7 +190,7 @@ export const CalibrationScreen: React.FC<CalibrationScreenProps> = ({
                   sfx.playClick();
                   onProceedToHowToPlay();
                 }}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#7a1636] text-white font-bold text-sm shadow-md hover:bg-[#62102b] hover:scale-102 active:scale-98 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-[#7a1636] text-white font-black text-sm shadow-md hover:bg-[#62102b] hover:scale-102 active:scale-98 transition-all cursor-pointer"
               >
                 <span>{t('continue')}</span>
                 <ArrowRight className="w-4 h-4" />

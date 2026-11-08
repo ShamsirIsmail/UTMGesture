@@ -1,10 +1,10 @@
 // ============================================================
-// UTM Gesture Quest V3.0 — Welcome Screen (Stage 1: Attract Mode)
-// Features the 5 official organizer logos (Welcome Screen ONLY)
+// UTM Gesture Quest V3.3 — Welcome Screen (Stage 1: Attract Mode)
+// Professional University Branding, Prominent Typography, Solid Buttons
 // ============================================================
 
 import React, { useEffect } from 'react';
-import { Play, Trophy, MousePointer, Camera, Cpu, Sparkles, Globe } from 'lucide-react';
+import { Play, Trophy, MousePointer, Sparkles } from 'lucide-react';
 import { OrganizerLogos } from '../components/OrganizerLogos';
 import { useTranslation } from '../i18n/useTranslation';
 import { sfx } from '../services/audioEngine';
@@ -28,10 +28,11 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   onMousePreview,
   onOpenLeaderboard,
 }) => {
-  const { t, language, toggleLanguage } = useTranslation();
+  const { t, language } = useTranslation();
 
   useEffect(() => {
-    voice.speak('WELCOME', language, 1500);
+    // Event-driven voice greeting (triggers once per session)
+    voice.speakWelcome(language);
   }, [language]);
 
   const handleStart = () => {
@@ -44,108 +45,82 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full bg-welcome-light overflow-y-auto flex flex-col justify-between">
-      {/* 1. Official Organizer / Strategic Partners Logos Bar (Welcome screen ONLY) */}
-      <div className="w-full pt-3 pb-1 border-b border-stone-200/60 bg-white/60 backdrop-blur-xs">
+    <div className="relative w-full h-full bg-welcome-light overflow-y-auto flex flex-col justify-between select-none">
+      {/* 1. Official 5 Borderless Organizer Logos (Welcome Screen ONLY) */}
+      <div className="w-full pt-4 pb-2 z-10">
         <OrganizerLogos />
       </div>
 
       {/* 2. Main Hero Section */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-6 text-center max-w-4xl mx-auto w-full">
-        {/* Event Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#7a1636]/20 shadow-xs text-xs font-semibold text-[#7a1636] mb-5">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-4 text-center max-w-4xl mx-auto w-full z-10">
+        {/* Event Name & Date Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/85 border border-[#7a1636]/20 shadow-2xs text-xs font-semibold text-[#7a1636] mb-4 backdrop-blur-2xs">
           <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
           <span>{t('eventName')}</span>
         </div>
 
-        {/* Game Title */}
-        <h1 className="font-serif font-black tracking-tight leading-none text-stone-900 select-none">
-          <span className="block text-4xl sm:text-6xl text-[#7a1636] drop-shadow-xs">
+        {/* Large Prominent Game Title */}
+        <h1 className="font-sans tracking-tight leading-none text-stone-900 select-none mb-2">
+          <span className="inline-block text-4xl sm:text-6xl lg:text-7xl font-black text-[#7a1636] drop-shadow-2xs mr-2 sm:mr-3">
             UTM
           </span>
-          <span className="block mt-1 text-3xl sm:text-5xl text-stone-900">
+          <span className="inline-block text-3xl sm:text-5xl lg:text-6xl font-extrabold text-stone-900">
             Gesture Quest
           </span>
         </h1>
 
-        {/* Subtitle */}
-        <p className="mt-3 text-lg sm:text-xl font-bold text-[#b45309] tracking-wide">
+        {/* Concise University Tagline */}
+        <p className="text-base sm:text-xl font-bold text-[#b45309] tracking-wide mt-1">
           {t('appSubtitle')}
         </p>
 
-        {/* Concise Description */}
-        <p className="mt-2 text-xs sm:text-sm text-stone-600 max-w-xl mx-auto leading-relaxed">
+        {/* Short Community-Friendly Description */}
+        <p className="mt-2.5 text-xs sm:text-sm text-stone-700 font-medium max-w-xl mx-auto leading-relaxed">
           {t('welcomeIntro')}
         </p>
 
-        {/* Primary & Secondary Action Buttons */}
-        <div className="mt-7 flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto">
-          {/* Start Game Button (Primary Maroon) */}
+        {/* Solid Professional Action Buttons */}
+        <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+          {/* Start Game Button (Solid UTM Maroon) */}
           <button
             onClick={handleStart}
-            className="group relative inline-flex items-center justify-center gap-3 px-9 py-3.5 rounded-full bg-[#7a1636] text-white font-bold text-base sm:text-lg tracking-wide shadow-exhibition hover:bg-[#63102b] hover:shadow-exhibition-lg hover:scale-102 active:scale-98 transition-all cursor-pointer w-full sm:w-auto"
+            className="group relative inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-3.5 rounded-2xl bg-[#7a1636] text-white font-bold text-base sm:text-lg tracking-wide shadow-exhibition hover:bg-[#62102b] hover:shadow-exhibition-lg hover:scale-102 active:scale-98 transition-all cursor-pointer w-full sm:w-auto"
           >
             <Play className="w-5 h-5 fill-white text-white group-hover:translate-x-0.5 transition-transform" />
             <span>{t('startGame')}</span>
           </button>
 
-          {/* Leaderboard Button (Secondary Gold/Amber) */}
+          {/* Leaderboard Button (Solid Secondary Card) */}
           <button
             onClick={() => {
               sfx.playClick();
               onOpenLeaderboard();
             }}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-amber-50 border border-amber-300 text-amber-900 font-bold text-sm sm:text-base shadow-xs hover:shadow-sm transition-all cursor-pointer w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl bg-white/95 hover:bg-stone-50 border border-[#7a1636]/35 text-[#7a1636] font-bold text-sm sm:text-base shadow-2xs hover:shadow-xs transition-all cursor-pointer w-full sm:w-auto"
           >
             <Trophy className="w-5 h-5 text-amber-600" />
             <span>{t('leaderboard')}</span>
           </button>
+        </div>
 
-          {/* Mouse Mode Quick Button */}
+        {/* Discreet Mouse Practice Mode Option */}
+        <div className="mt-3.5">
           <button
             onClick={() => {
               sfx.playClick();
               onMousePreview();
             }}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 font-semibold text-xs sm:text-sm shadow-xs transition-all cursor-pointer w-full sm:w-auto"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-stone-600 hover:text-[#7a1636] hover:bg-white/60 font-semibold text-xs transition-colors cursor-pointer"
           >
-            <MousePointer className="w-4 h-4 text-stone-400" />
+            <MousePointer className="w-3.5 h-3.5 text-stone-400" />
             <span>{t('quickMouseTest')}</span>
           </button>
         </div>
-
-        {/* Feature Highlights Strip */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-7 text-xs text-stone-500 font-medium">
-          <div className="flex items-center gap-1.5">
-            <Camera className="w-4 h-4 text-[#7a1636]" />
-            <span>{t('feature1')}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Cpu className="w-4 h-4 text-[#7a1636]" />
-            <span>{t('feature2')}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-[#7a1636]" />
-            <span>{t('feature3')}</span>
-          </div>
-        </div>
       </div>
 
-      {/* 3. Bottom Language Switcher Strip */}
-      <div className="w-full py-2.5 px-6 flex items-center justify-center gap-2 border-t border-stone-200/60 bg-white/40 text-xs">
-        <span className="text-stone-500 font-medium flex items-center gap-1.5">
-          <Globe className="w-3.5 h-3.5 text-[#7a1636]" />
-          Pilihan Bahasa:
-        </span>
-        <button
-          onClick={() => {
-            sfx.playClick();
-            toggleLanguage();
-          }}
-          className="px-3 py-1 rounded-full bg-white border border-stone-200 font-bold text-[#7a1636] hover:bg-stone-50 shadow-xs transition-colors cursor-pointer"
-        >
-          {language === 'bm' ? 'Bahasa Melayu (Tukar ke EN)' : 'English (Switch to BM)'}
-        </button>
+      {/* 3. Subtle University Exhibition Footer */}
+      <div className="w-full py-2 px-6 flex items-center justify-center border-t border-stone-200/50 bg-white/30 backdrop-blur-2xs text-[11px] text-stone-500 font-medium z-10">
+        <span>Universiti Teknologi Malaysia • Fakulti Komputeran • CCIN • 2026</span>
       </div>
     </div>
   );

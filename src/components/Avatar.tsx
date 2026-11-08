@@ -9,7 +9,7 @@ interface AvatarProps {
   photo?: string;
   avatarId?: number;
   nickname: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   className?: string;
 }
 
@@ -34,6 +34,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     md: 'w-11 h-11 text-sm',
     lg: 'w-16 h-16 text-lg',
     xl: 'w-24 h-24 text-2xl',
+    '2xl': 'w-28 h-28 text-3xl',
   }[size];
 
   const initial = (nickname.trim()[0] || 'U').toUpperCase();

@@ -170,9 +170,16 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
   useEffect(() => { gamePhaseRef.current = gamePhase; }, [gamePhase]);
   useEffect(() => { coreProgressRef.current = coreProgress; }, [coreProgress]);
 
-  // Voice greeting on gameplay start
+  // Voice greeting on gameplay start (plays once per round)
   useEffect(() => {
-    voice.speak('GAMEPLAY_START', languageRef.current, 1000);
+    voice.resetRound();
+    const timer = setTimeout(() => {
+      voice.speakGameplayStart(languageRef.current);
+    }, 800);
+    return () => {
+      clearTimeout(timer);
+      voice.cancel();
+    };
   }, []);
 
   // Developer Debug Mode toggle via key 'D'
@@ -495,7 +502,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
 
         if (newlyCollected > 0) {
           sfx.playOrbCollect(newlyCollected);
-          voice.speak('ORB_COLLECTED', languageRef.current, 1200);
+          // Orb collection uses short positive SFX only (no voice sentence per orb)
           setCollectedCount(newlyCollected);
           comboRef.current++;
           if (comboRef.current > maxComboRef.current) {
@@ -514,7 +521,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
             setTimeout(() => {
               gamePhaseRef.current = 'CORE';
               setGamePhase('CORE');
-              voice.speak('FINAL_MISSION', languageRef.current, 1000);
+              voice.speakFinalMission(languageRef.current);
               showFeedback(t('activateCore'), 50, 25);
             }, 450);
           }
@@ -556,7 +563,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
             gamePhaseRef.current = 'TRANSITION';
             setGamePhase('TRANSITION');
             sfx.playCoreActivate();
-            voice.speak('COMPLETION', languageRef.current, 1000);
+            voice.speakCompletion(languageRef.current);
             setTimeout(() => {
               sfx.playVictoryFanfare();
               onElapsedUpdateRef.current(elapsed);

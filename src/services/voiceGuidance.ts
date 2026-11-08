@@ -1,6 +1,7 @@
 // ============================================================
-// UTM Gesture Quest V3.1 — Offline Bilingual Voice Guidance
-// Uses browser SpeechSynthesis API with installed offline voices
+// UTM Gesture Quest V3.3 — Smarter Bilingual Voice Guidance
+// Event-driven, non-repetitive, once-per-phase narration
+// Offline SpeechSynthesis with intelligent locale matching & subtitle fallback
 // ============================================================
 
 import type { Language } from '../types';
@@ -10,15 +11,9 @@ export type VoiceEvent =
   | 'CALIBRATION'
   | 'HAND_DETECTED'
   | 'GAMEPLAY_START'
-  | 'ORB_COLLECTED'
   | 'FINAL_MISSION'
   | 'COMPLETION'
   | 'LEADERBOARD';
-
-export interface VoiceMessage {
-  text: string;
-  lang: Language;
-}
 
 export const VOICE_SCRIPTS: Record<VoiceEvent, Record<Language, string>> = {
   WELCOME: {
@@ -26,32 +21,28 @@ export const VOICE_SCRIPTS: Record<VoiceEvent, Record<Language, string>> = {
     en: 'Welcome to UTM Gesture Quest! Are you ready to play?',
   },
   CALIBRATION: {
-    bm: 'Sila tunjukkan tangan anda di hadapan kamera.',
-    en: 'Please show your hand to the camera.',
+    bm: 'Sila tunjukkan tangan anda di hadapan kamera untuk penentukuran AI.',
+    en: 'Please show your hand in front of the camera for AI calibration.',
   },
   HAND_DETECTED: {
-    bm: 'Bagus! Tangan anda berjaya dikesan.',
+    bm: 'Bagus! Tangan anda telah berjaya dikesan.',
     en: 'Great! Your hand has been detected.',
   },
   GAMEPLAY_START: {
-    bm: 'Gerakkan jari anda untuk mengumpul tenaga.',
-    en: 'Move your finger to collect the energy.',
-  },
-  ORB_COLLECTED: {
-    bm: 'Syabas! Tenaga berjaya dikumpul.',
-    en: 'Well done! Energy collected.',
+    bm: 'Gerakkan jari telunjuk anda untuk mengumpul sasaran tenaga.',
+    en: 'Move your index finger to collect the energy targets.',
   },
   FINAL_MISSION: {
-    bm: 'Misi terakhir! Aktifkan teras tenaga.',
-    en: 'Final mission! Activate the energy core.',
+    bm: 'Misi terakhir! Kunci kursor pada teras tenaga untuk mengaktifkannya.',
+    en: 'Final mission! Hold cursor on the energy core to activate.',
   },
   COMPLETION: {
-    bm: 'Tahniah! Anda berjaya menyelesaikan misi!',
-    en: 'Congratulations! You have completed the mission!',
+    bm: 'Tahniah! Anda berjaya menyelesaikan semua misi!',
+    en: 'Congratulations! You have completed all missions!',
   },
   LEADERBOARD: {
-    bm: 'Masa anda telah direkodkan. Tahniah!',
-    en: 'Your time has been recorded. Congratulations!',
+    bm: 'Masa anda telah direkodkan ke dalam papan skor. Tahniah!',
+    en: 'Your time has been recorded in the leaderboard. Congratulations!',
   },
 };
 
@@ -60,18 +51,39 @@ type CaptionListener = (caption: string | null) => void;
 class VoiceGuidanceService {
   public enabled: boolean = true;
   public volume: number = 0.9;
+
   private voices: SpeechSynthesisVoice[] = [];
+  private hasSpokenWelcome: boolean = false;
+  private hasSpokenCalibration: boolean = false;
+  private hasSpokenGameplayStart: boolean = false;
+  private hasSpokenFinalMission: boolean = false;
+  private hasSpokenCompletion: boolean = false;
+  private lastHandDetectedTime: number = 0;
   private lastEventTime: Record<string, number> = {};
+
   private captionListeners: Set<CaptionListener> = new Set();
   private captionTimer: number | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
 
   constructor() {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      this.initVoices();
-      window.speechSynthesis.onvoiceschanged = () => {
+    if (typeof window !== 'undefined') {
+      // Load stored preferences
+      const storedEnabled = localStorage.getItem('utm_voice_enabled');
+      if (storedEnabled !== null) {
+        this.enabled = storedEnabled === 'true';
+      }
+      const storedVol = localStorage.getItem('utm_voice_volume');
+      if (storedVol !== null) {
+        const parsed = parseFloat(storedVol);
+        if (!isNaN(parsed)) this.volume = Math.max(0, Math.min(1, parsed));
+      }
+
+      if ('speechSynthesis' in window) {
         this.initVoices();
-      };
+        window.speechSynthesis.onvoiceschanged = () => {
+          this.initVoices();
+        };
+      }
     }
   }
 
@@ -80,12 +92,33 @@ class VoiceGuidanceService {
     this.voices = window.speechSynthesis.getVoices();
   }
 
+  public setEnabled(val: boolean) {
+    this.enabled = val;
+    try {
+      localStorage.setItem('utm_voice_enabled', String(val));
+    } catch {
+      // ignore
+    }
+    if (!val) {
+      this.cancel();
+    }
+  }
+
+  public setVolume(val: number) {
+    this.volume = Math.max(0, Math.min(1, val));
+    try {
+      localStorage.setItem('utm_voice_volume', String(this.volume));
+    } catch {
+      // ignore
+    }
+  }
+
   public subscribeCaption(listener: CaptionListener): () => void {
     this.captionListeners.add(listener);
     return () => this.captionListeners.delete(listener);
   }
 
-  private emitCaption(text: string | null, durationMs = 3500) {
+  private emitCaption(text: string | null, durationMs = 3800) {
     if (this.captionTimer) {
       clearTimeout(this.captionTimer);
       this.captionTimer = null;
@@ -106,12 +139,23 @@ class VoiceGuidanceService {
     return this.voices;
   }
 
+  public hasNativeMalayVoice(): boolean {
+    const all = this.getAvailableVoices();
+    return all.some(
+      (v) =>
+        v.lang.toLowerCase().startsWith('ms') ||
+        v.name.toLowerCase().includes('malay') ||
+        v.name.toLowerCase().includes('malaysia') ||
+        v.lang.toLowerCase().startsWith('id') ||
+        v.name.toLowerCase().includes('indonesia')
+    );
+  }
+
   public findBestVoice(lang: Language): SpeechSynthesisVoice | null {
     const all = this.getAvailableVoices();
     if (!all.length) return null;
 
     if (lang === 'bm') {
-      // 1. Exact Malay locale
       const msVoice = all.find(
         (v) =>
           v.lang.toLowerCase().startsWith('ms') ||
@@ -120,13 +164,15 @@ class VoiceGuidanceService {
       );
       if (msVoice) return msVoice;
 
-      // 2. Closely related Indonesian voice (sounds natural for Malay)
       const idVoice = all.find(
         (v) =>
           v.lang.toLowerCase().startsWith('id') ||
           v.name.toLowerCase().includes('indonesia')
       );
       if (idVoice) return idVoice;
+
+      // DO NOT return an English voice to read Malay text; return null so we don't phonetic butcher!
+      return null;
     }
 
     // English voices
@@ -136,22 +182,14 @@ class VoiceGuidanceService {
         v.lang.toLowerCase().startsWith('en-gb') ||
         v.lang.toLowerCase().startsWith('en')
     );
-    if (enVoice) return enVoice;
-
-    return all[0] || null;
+    return enVoice || all[0] || null;
   }
 
-  public speak(event: VoiceEvent, lang: Language, cooldownMs = 2500) {
-    const text = VOICE_SCRIPTS[event]?.[lang];
-    if (!text) return;
-
-    // Cooldown check to avoid spamming the same event
-    const now = performance.now();
-    const last = this.lastEventTime[event] || 0;
-    if (now - last < cooldownMs) return;
-    this.lastEventTime[event] = now;
-
-    // Always show caption even if voice is disabled or voice synthesis fails
+  /**
+   * Core speaking method with priority, subtitle emission, and voice locale safety
+   */
+  private speakRaw(text: string, lang: Language) {
+    // Always show clean on-screen subtitle caption
     this.emitCaption(text);
 
     if (!this.enabled || typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -159,29 +197,30 @@ class VoiceGuidanceService {
     }
 
     try {
-      // Cancel previous speech to prevent overlapping narration
       window.speechSynthesis.cancel();
+
+      const voice = this.findBestVoice(lang);
+      // Safety rule: if BM selected but no Malay/Indonesian voice exists on laptop,
+      // rely on subtitles instead of allowing an English robotic voice to mangle Malay!
+      if (lang === 'bm' && !voice) {
+        return;
+      }
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.volume = this.volume;
-      utterance.rate = 0.95; // Clear exhibition pace
+      utterance.rate = 0.95; // Calm, clear pacing
       utterance.pitch = 1.0;
 
-      const voice = this.findBestVoice(lang);
       if (voice) {
         utterance.voice = voice;
         utterance.lang = voice.lang;
       } else {
-        utterance.lang = lang === 'bm' ? 'ms-MY' : 'en-US';
+        utterance.lang = 'en-US';
       }
 
       this.currentUtterance = utterance;
-      utterance.onend = () => {
-        this.currentUtterance = null;
-      };
-      utterance.onerror = () => {
-        this.currentUtterance = null;
-      };
+      utterance.onend = () => { this.currentUtterance = null; };
+      utterance.onerror = () => { this.currentUtterance = null; };
 
       window.speechSynthesis.speak(utterance);
     } catch (e) {
@@ -189,6 +228,98 @@ class VoiceGuidanceService {
     }
   }
 
+  // ============================================================
+  // EVENT-DRIVEN NARRATION API (ONCE PER EVENT RULES)
+  // ============================================================
+
+  /** Welcome screen narration: plays once per session */
+  public speakWelcome(lang: Language) {
+    if (this.hasSpokenWelcome) return;
+    this.hasSpokenWelcome = true;
+    this.speakRaw(VOICE_SCRIPTS.WELCOME[lang], lang);
+  }
+
+  /** Calibration instructions: plays once when calibration opens */
+  public speakCalibration(lang: Language) {
+    if (this.hasSpokenCalibration) return;
+    this.hasSpokenCalibration = true;
+    this.speakRaw(VOICE_SCRIPTS.CALIBRATION[lang], lang);
+  }
+
+  /** Hand detected: plays strictly on stable detection with 45s cooldown */
+  public speakHandDetected(lang: Language) {
+    const now = performance.now();
+    if (now - this.lastHandDetectedTime < 45000) return; // 45s cooldown
+    this.lastHandDetectedTime = now;
+    this.speakRaw(VOICE_SCRIPTS.HAND_DETECTED[lang], lang);
+  }
+
+  /** Gameplay start: plays once per round */
+  public speakGameplayStart(lang: Language) {
+    if (this.hasSpokenGameplayStart) return;
+    this.hasSpokenGameplayStart = true;
+    this.speakRaw(VOICE_SCRIPTS.GAMEPLAY_START[lang], lang);
+  }
+
+  /** Final mission (Future Core): plays once when core activates */
+  public speakFinalMission(lang: Language) {
+    if (this.hasSpokenFinalMission) return;
+    this.hasSpokenFinalMission = true;
+    this.speakRaw(VOICE_SCRIPTS.FINAL_MISSION[lang], lang);
+  }
+
+  /** Mission complete celebration */
+  public speakCompletion(lang: Language) {
+    if (this.hasSpokenCompletion) return;
+    this.hasSpokenCompletion = true;
+    this.speakRaw(VOICE_SCRIPTS.COMPLETION[lang], lang);
+  }
+
+  /** Leaderboard submission */
+  public speakLeaderboard(lang: Language) {
+    const now = performance.now();
+    const last = this.lastEventTime['LEADERBOARD'] || 0;
+    if (now - last < 15000) return;
+    this.lastEventTime['LEADERBOARD'] = now;
+    this.speakRaw(VOICE_SCRIPTS.LEADERBOARD[lang], lang);
+  }
+
+  /** Backward-compatible helper that routes legacy calls and silences noisy events */
+  public speak(event: VoiceEvent | 'ORB_COLLECTED' | string, lang: Language, delayMs = 0) {
+    if (event === 'ORB_COLLECTED') {
+      // Intentionally silent per user requirement: SFX only for orb pickups
+      return;
+    }
+    const trigger = () => {
+      if (event === 'WELCOME') this.speakWelcome(lang);
+      else if (event === 'CALIBRATION') this.speakCalibration(lang);
+      else if (event === 'HAND_DETECTED') this.speakHandDetected(lang);
+      else if (event === 'GAMEPLAY_START') this.speakGameplayStart(lang);
+      else if (event === 'FINAL_MISSION') this.speakFinalMission(lang);
+      else if (event === 'COMPLETION') this.speakCompletion(lang);
+      else if (event === 'LEADERBOARD') this.speakLeaderboard(lang);
+    };
+
+    if (delayMs > 0) {
+      setTimeout(trigger, delayMs);
+    } else {
+      trigger();
+    }
+  }
+
+  /** Reset per-round flags when a new game begins */
+  public resetRound() {
+    this.hasSpokenGameplayStart = false;
+    this.hasSpokenFinalMission = false;
+    this.hasSpokenCompletion = false;
+  }
+
+  /** Reset calibration flag when entering calibration */
+  public resetCalibration() {
+    this.hasSpokenCalibration = false;
+  }
+
+  /** Cancel current speech & clear subtitle */
   public cancel() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -198,4 +329,3 @@ class VoiceGuidanceService {
 }
 
 export const voice = new VoiceGuidanceService();
-

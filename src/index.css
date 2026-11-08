@@ -37,24 +37,26 @@
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(122, 22, 54, 0.2); border-radius: 3px; }
 
-  /* Subtle card shadow */
+  /* Refined, professional exhibition shadows */
   .shadow-exhibition {
-    box-shadow: 0 4px 20px -2px rgba(122, 22, 54, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 20px -2px rgba(122, 22, 54, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.05);
   }
 
   .shadow-exhibition-lg {
-    box-shadow: 0 10px 30px -4px rgba(122, 22, 54, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 12px 32px -4px rgba(122, 22, 54, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
   }
 }
 
 /* ============================================================
-   ASSET-BASED LIGHT BACKGROUND SYSTEM WITH CLEAN FALLBACKS
+   ASSET-BASED LIGHT BACKGROUND SYSTEM (V3.3 Natural Contrast)
+   Preserves natural blue sky, campus architecture & lighting
    ============================================================ */
 
 .bg-welcome-light {
-  background-color: #faf8f5;
+  background-color: #f4f6f9;
   background-image: 
-    linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(250, 248, 245, 0.94) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.52) 55%, rgba(250, 248, 245, 0.88) 100%),
+    url('/asset/backgrounds/welcome_light.webp'),
     url('/assets/backgrounds/welcome_light.webp');
   background-size: cover;
   background-position: center;
@@ -64,7 +66,8 @@
 .bg-instruction-light {
   background-color: #f7f6f2;
   background-image: 
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(247, 246, 242, 0.95) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(247, 246, 242, 0.85) 100%),
+    url('/asset/backgrounds/instruction_light.webp'),
     url('/assets/backgrounds/instruction_light.webp');
   background-size: cover;
   background-position: center;
@@ -74,7 +77,8 @@
 .bg-gameplay-light {
   background-color: #f8fafc;
   background-image: 
-    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%),
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.75) 0%, rgba(241, 245, 249, 0.90) 100%),
+    url('/asset/backgrounds/gameplay_light.webp'),
     url('/assets/backgrounds/gameplay_light.webp');
   background-size: cover;
   background-position: center;
@@ -84,7 +88,8 @@
 .bg-complete-light {
   background-color: #fffdf9;
   background-image: 
-    linear-gradient(180deg, rgba(255, 253, 249, 0.92) 0%, rgba(254, 249, 238, 0.96) 100%),
+    linear-gradient(180deg, rgba(255, 253, 249, 0.45) 0%, rgba(254, 249, 238, 0.85) 100%),
+    url('/asset/backgrounds/complete_light.webp'),
     url('/assets/backgrounds/complete_light.webp');
   background-size: cover;
   background-position: center;
@@ -93,7 +98,12 @@
 
 .bg-leaderboard-light {
   background-color: #f9f8f5;
-  background-image: linear-gradient(180deg, #ffffff 0%, #f7f5f0 100%);
+  background-image: 
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(247, 245, 240, 0.9) 100%),
+    url('/asset/backgrounds/complete_light.webp'),
+    url('/assets/backgrounds/complete_light.webp');
+  background-size: cover;
+  background-position: center;
 }
 
 /* Gentle keyframe animations */
@@ -103,23 +113,5 @@
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes floatGentle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-.animate-float-gentle {
-  animation: floatGentle 3s ease-in-out infinite;
-}
-
-@keyframes corePulseLight {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 0 15px rgba(122, 22, 54, 0.25)); }
-  50% { transform: translate(-50%, -50%) scale(1.04); filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.45)); }
-}
-
-.animate-core-light {
-  animation: corePulseLight 2s ease-in-out infinite;
+  animation: fadeIn 0.4s ease-out forwards;
 }
