@@ -4,7 +4,7 @@
 // ============================================================
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { TranslationProvider } from './i18n/useTranslation';
+import { TranslationProvider, useTranslation } from './i18n/useTranslation';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { OperatorModal } from './components/OperatorModal';
@@ -21,6 +21,8 @@ import { createHandLandmarker, isHandLandmarkerReady, detectHand } from './servi
 import type { ScreenState, ControlMode, DifficultyLevel, LandmarkPoint } from './types';
 
 function AppContent() {
+  const { language } = useTranslation();
+
   // Navigation & Game Modes
   const [screen, setScreen] = useState<ScreenState>('WELCOME');
   const [previousScreen, setPreviousScreen] = useState<ScreenState>('WELCOME');
@@ -194,8 +196,16 @@ function AppContent() {
     setDifficulty(d);
   }, []);
 
+  // Stop welcome speech whenever transitioning away from WELCOME screen
+  useEffect(() => {
+    if (screen !== 'WELCOME') {
+      voice.stopWelcome();
+    }
+  }, [screen]);
+
   // Navigation handlers
   const goHome = useCallback(() => {
+    voice.stopWelcome();
     sfx.playClick();
     setScreen('WELCOME');
     setElapsed(0);
@@ -246,11 +256,47 @@ function AppContent() {
     [initializeCameraAndModel]
   );
 
-  // Global Exhibition Keyboard Shortcuts (R, 1/2/3, M, F, Esc/H, O, S)
+  // Global Exhibition Keyboard Shortcuts (W, Shift+W, R, 1/2/3, M, F, Esc/H, O, S, V)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      // Safeguard 1: Ignore shortcuts when typing inside form inputs or editable areas
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
+
+      // Safeguard 2: Ignore key combinations with Ctrl, Alt, Meta
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+      // Safeguard 3: Ignore repeated keydown events when key is held down
+      if (e.repeat) return;
+
+      // V3.7: Operator Welcome Narration Shortcuts
+      if (e.code === 'KeyW' || e.key === 'w' || e.key === 'W') {
+        if (isOperatorModalOpen) return;
+
+        if (e.shiftKey) {
+          // Shift + W: Immediately stop welcome narration & clear subtitles
+          voice.stopWelcome();
+          return;
+        } else {
+          // W: Play / Replay Welcome Narration (ONLY on Welcome Screen)
+          if (screen === 'WELCOME') {
+            voice.playWelcomeManual(language);
+            return;
+          }
+          // Intentionally do NOT activate W during gameplay or other screens
+          return;
+        }
+      }
+
+      // Safeguard 4: If operator modal is open, only allow Escape or O to close it
+      if (isOperatorModalOpen) {
+        if (e.key === 'Escape' || e.key === 'o' || e.key === 'O') {
+          sfx.playClick();
+          setIsOperatorModalOpen(false);
+        }
+        return;
+      }
 
       switch (e.key) {
         case 'r':
@@ -323,6 +369,8 @@ function AppContent() {
     toggleSfx,
     toggleVoice,
     initializeCameraAndModel,
+    isOperatorModalOpen,
+    language,
   ]);
 
   const handleGameComplete = useCallback(() => {

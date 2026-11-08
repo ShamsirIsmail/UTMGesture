@@ -17,8 +17,8 @@ export type VoiceEvent =
 
 export const VOICE_SCRIPTS: Record<VoiceEvent, Record<Language, string>> = {
   WELCOME: {
-    bm: 'Selamat datang ke UTM Gesture Quest! Bersedia untuk mula main?',
-    en: 'Welcome to UTM Gesture Quest! Are you ready to play?',
+    bm: 'Selamat datang ke UTM Gesture Quest! Dalam permainan ini, anda boleh bermain menggunakan gerakan tangan. Tekan Mula dan benarkan akses kamera. Gerakkan jari telunjuk untuk mengawal penunjuk di skrin. Rapatkan ibu jari dan jari telunjuk untuk kumpul tenaga dengan lebih pantas. Kumpul semua bola tenaga dan aktifkan teras untuk menyelesaikan misi. Dah sedia? Jom cuba!',
+    en: "Welcome to UTM Gesture Quest! In this game, you control the action using your hand movements. Press Start and allow camera access. Move your index finger to control the cursor. Bring your thumb and index finger together to charge energy faster. Collect all the energy orbs and activate the core to complete your mission. Ready? Let's play!",
   },
   CALIBRATION: {
     bm: 'Buka tapak tangan anda di hadapan kamera untuk penentukuran AI.',
@@ -232,7 +232,75 @@ class VoiceGuidanceService {
   // EVENT-DRIVEN NARRATION API (ONCE PER EVENT RULES)
   // ============================================================
 
-  /** Welcome screen narration: plays once per session */
+  /**
+   * V3.7: Manual Welcome Narration for exhibition operators
+   * Allows unlimited replays with clean restart and synchronized subtitles
+   */
+  public playWelcomeManual(lang: Language): boolean {
+    const text = VOICE_SCRIPTS.WELCOME[lang];
+
+    // Immediate restart: cancel any playing speech and clear previous subtitle timer
+    this.cancel();
+
+    // Emit synchronized caption banner with extended duration (~24 seconds)
+    this.emitCaption(text, 24000);
+
+    if (!this.enabled || typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return false;
+    }
+
+    try {
+      const voice = this.findBestVoice(lang);
+      // If BM selected but no native Malay/Indonesian voice exists, rely on on-screen subtitles
+      if (lang === 'bm' && !voice) {
+        console.warn('[VoiceGuidance] No native Malay/Indonesian voice found; displaying subtitles only.');
+        return false;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.volume = this.volume;
+      utterance.rate = 0.95; // Calm, friendly, exhibition-suited pacing
+      utterance.pitch = 1.0;
+
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      } else {
+        utterance.lang = 'en-US';
+      }
+
+      this.currentUtterance = utterance;
+
+      utterance.onend = () => {
+        if (this.currentUtterance === utterance) {
+          this.currentUtterance = null;
+          this.emitCaption(null);
+        }
+      };
+
+      utterance.onerror = () => {
+        if (this.currentUtterance === utterance) {
+          this.currentUtterance = null;
+          this.emitCaption(null);
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+      return true;
+    } catch (e) {
+      console.warn('Speech synthesis error in playWelcomeManual:', e);
+      return false;
+    }
+  }
+
+  /**
+   * V3.7: Stop Welcome Narration immediately & clear subtitles (Shift + W)
+   */
+  public stopWelcome() {
+    this.cancel();
+  }
+
+  /** Legacy welcome helper */
   public speakWelcome(lang: Language) {
     if (this.hasSpokenWelcome) return;
     this.hasSpokenWelcome = true;

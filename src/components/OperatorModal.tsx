@@ -22,6 +22,8 @@ import {
   FileSpreadsheet,
   FileCode,
   Info,
+  Play,
+  Square,
 } from 'lucide-react';
 import { useTranslation } from '../i18n/useTranslation';
 import {
@@ -294,7 +296,7 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
 
             <div className="mt-6 p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-800 text-left max-w-sm">
               <span className="font-bold block mb-0.5">Nota Keselamatan:</span>
-              PIN klien ini bertujuan mengelakkan akses tidak sengaja oleh pengunjung pameran. PIN lalai awal adalah <code className="font-mono font-bold bg-white px-1 rounded">2026</code> (boleh ditukar di papan kawalan).
+              PIN ini bertujuan mengelakkan akses tidak sengaja oleh pengunjung pameran. Sila rujuk ketua teknikal bertugas jika anda terlupa PIN akses petugas.
             </div>
           </div>
         ) : (
@@ -379,19 +381,66 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => {
-                      voice.speakWelcome('bm');
+                      voice.playWelcomeManual('bm');
                     }}
                     className="px-2.5 py-1 rounded-full bg-[#7a1636] text-white text-[10px] font-bold cursor-pointer hover:bg-[#62102b] transition-colors"
+                    title="Uji suara Bahasa Melayu"
                   >
                     Uji BM
                   </button>
                   <button
                     onClick={() => {
-                      voice.speakWelcome('en');
+                      voice.playWelcomeManual('en');
                     }}
                     className="px-2.5 py-1 rounded-full bg-stone-800 text-white text-[10px] font-bold cursor-pointer hover:bg-stone-700 transition-colors"
+                    title="Test English voice"
                   >
                     Test EN
+                  </button>
+                </div>
+              </div>
+
+              {/* V3.7: Welcome Narration Operator Trigger (Follows selected language) */}
+              <div className="flex flex-wrap items-center justify-between gap-2.5 p-3 rounded-xl bg-white border border-[#7a1636]/20 shadow-2xs">
+                <div>
+                  <div className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                    <span>
+                      {language === 'bm'
+                        ? 'Suara Aluan Pameran (Skrin Utama)'
+                        : 'Exhibition Welcome Narration'}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-stone-500">
+                    {language === 'bm'
+                      ? 'Siarkan penerangan AI apabila kumpulan pelawat baharu tiba'
+                      : 'Broadcast AI introduction when a new visitor group arrives'}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    data-testid="play-welcome-narration-btn"
+                    onClick={() => {
+                      voice.playWelcomeManual(language);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#7a1636] hover:bg-[#62102b] text-white text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-98"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-white" />
+                    <span>{language === 'bm' ? 'Mainkan Suara Aluan' : 'Play Welcome Narration'}</span>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/20 font-mono text-[9px] text-white/90">W</kbd>
+                  </button>
+
+                  <button
+                    data-testid="stop-welcome-narration-btn"
+                    onClick={() => {
+                      voice.stopWelcome();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-98"
+                  >
+                    <Square className="w-3.5 h-3.5 fill-stone-700 text-stone-700" />
+                    <span>{language === 'bm' ? 'Hentikan' : 'Stop Narration'}</span>
+                    <kbd className="px-1.5 py-0.5 rounded bg-stone-300 font-mono text-[9px] text-stone-700">Shift+W</kbd>
                   </button>
                 </div>
               </div>

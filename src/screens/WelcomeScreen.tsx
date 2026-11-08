@@ -3,12 +3,11 @@
 // Professional University Branding, Prominent Typography, Solid Buttons
 // ============================================================
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Play, Trophy, MousePointer, Sparkles } from 'lucide-react';
 import { OrganizerLogos } from '../components/OrganizerLogos';
 import { useTranslation } from '../i18n/useTranslation';
 import { sfx } from '../services/audioEngine';
-import { voice } from '../services/voiceGuidance';
 import type { ControlMode, CameraStatus } from '../types';
 
 interface WelcomeScreenProps {
@@ -28,12 +27,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   onMousePreview,
   onOpenLeaderboard,
 }) => {
-  const { t, language } = useTranslation();
-
-  useEffect(() => {
-    // Event-driven voice greeting (triggers once per session)
-    voice.speakWelcome(language);
-  }, [language]);
+  const { t } = useTranslation();
 
   const handleStart = () => {
     sfx.playClick();

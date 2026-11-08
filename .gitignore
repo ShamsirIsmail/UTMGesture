@@ -43,6 +43,8 @@ test-results/
 *.tmp
 *.webm
 test_diag.cjs
+verify_*.cjs
+monitor_*.cjs
 
 # Participant Data Privacy & Local Exports
 # NEVER commit participant names, photos, or raw exhibition data to Git
