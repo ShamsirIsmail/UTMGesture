@@ -62,16 +62,16 @@ export const OrganizerLogos: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-2 select-none">
+    <div className="w-full max-w-5xl mx-auto px-3 sm:px-4 py-1 sm:py-2 select-none">
       {/* Subtle University Branding Header */}
-      <div className="text-center mb-2.5">
-        <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] text-[#7a1636]/90 uppercase">
+      <div className="text-center mb-1 sm:mb-2">
+        <span className="text-[9px] sm:text-[10px] md:text-[11px] font-semibold tracking-[0.2em] sm:tracking-[0.25em] text-[#7a1636]/90 uppercase">
           Anjuran Bersama &amp; Rakan Strategik Komuniti
         </span>
       </div>
 
       {/* Clean, Borderless, Transparent Horizontal Brand Row */}
-      <div className="flex flex-wrap items-center justify-center gap-5 sm:gap-9 lg:gap-12">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 md:gap-9 lg:gap-12">
         {OFFICIAL_LOGOS.map((logo) => {
           const hasError = imageErrors[logo.id];
 
@@ -87,8 +87,8 @@ export const OrganizerLogos: React.FC = () => {
                   onError={() => handleError(logo.id)}
                   className={`object-contain select-none drop-shadow-2xs ${
                     logo.isWide
-                      ? 'h-14 sm:h-18 lg:h-20 max-w-[190px] sm:max-w-[230px]'
-                      : 'h-13 sm:h-16 lg:h-18 max-w-[80px] sm:max-w-[100px]'
+                      ? 'h-8 sm:h-12 md:h-16 lg:h-20 max-w-[120px] sm:max-w-[170px] md:max-w-[230px]'
+                      : 'h-7 sm:h-10 md:h-14 lg:h-18 max-w-[50px] sm:max-w-[70px] md:max-w-[100px]'
                   }`}
                   style={{ imageRendering: '-webkit-optimize-contrast' }}
                 />

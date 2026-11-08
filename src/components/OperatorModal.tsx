@@ -221,19 +221,19 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fadeIn">
-      <div className="w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl shadow-exhibition-lg border border-stone-200 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-stone-900/60 backdrop-blur-sm animate-fadeIn safe-area-px">
+      <div className="w-full max-w-2xl max-h-[92dvh] bg-white rounded-2xl sm:rounded-3xl shadow-exhibition-lg border border-stone-200 flex flex-col overflow-hidden">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 bg-stone-50">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#7a1636] flex items-center justify-center text-white shadow-xs">
-              <Shield className="w-5 h-5" />
+        <div className="flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-4 border-b border-stone-200 bg-stone-50 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#7a1636] flex items-center justify-center text-white shadow-xs">
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h3 className="font-serif font-black text-lg text-stone-900">
+              <h3 className="font-serif font-black text-base sm:text-lg text-stone-900 leading-tight">
                 {t('operatorDashboard')}
               </h3>
-              <p className="text-[11px] text-stone-500">
+              <p className="text-[10px] sm:text-[11px] text-stone-500 line-clamp-1">
                 Kawalan Pameran &amp; Pengurusan Data Tempatan
               </p>
             </div>
@@ -244,7 +244,7 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
               sfx.playClick();
               onClose();
             }}
-            className="p-1.5 rounded-full hover:bg-stone-200 text-stone-500 transition-colors cursor-pointer"
+            className="p-1 sm:p-1.5 rounded-full hover:bg-stone-200 text-stone-500 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -253,20 +253,21 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
         {/* Modal Content */}
         {!isAuthenticated ? (
           /* PIN Verification View */
-          <div className="p-8 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center text-[#7a1636] mb-4">
-              <Lock className="w-8 h-8" />
+          <div className="p-4 sm:p-8 flex flex-col items-center justify-center text-center flex-1 min-h-0 overflow-y-auto">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-stone-100 flex items-center justify-center text-[#7a1636] mb-3 sm:mb-4">
+              <Lock className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h4 className="text-xl font-bold text-stone-900 mb-1">
+            <h4 className="text-lg sm:text-xl font-bold text-stone-900 mb-1">
               Pengesahan Petugas Pameran
             </h4>
-            <p className="text-xs text-stone-500 max-w-sm mb-6 leading-relaxed">
+            <p className="text-xs text-stone-500 max-w-sm mb-4 sm:mb-6 leading-relaxed">
               Masukkan PIN acara untuk mengakses diagnostik, tetapan debug, dan pengurusan data peserta.
             </p>
 
             <form onSubmit={handlePinSubmit} className="w-full max-w-xs space-y-3">
               <input
                 type="password"
+                inputMode="numeric"
                 maxLength={8}
                 value={pin}
                 onChange={(e) => {
@@ -274,7 +275,7 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                   setPinError(false);
                 }}
                 placeholder="Masukkan PIN Petugas"
-                className={`w-full px-4 py-3 rounded-xl border text-center font-mono text-xl tracking-widest outline-none transition-all ${
+                className={`w-full px-4 py-2.5 sm:py-3 rounded-xl border text-center font-mono text-lg sm:text-xl tracking-widest outline-none transition-all ${
                   pinError
                     ? 'border-rose-400 bg-rose-50 text-rose-800'
                     : 'border-stone-300 focus:border-[#7a1636] bg-stone-50 focus:bg-white'
@@ -288,20 +289,20 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
               )}
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-[#7a1636] text-white font-bold text-sm hover:bg-[#62102b] transition-colors cursor-pointer shadow-xs"
+                className="w-full py-2.5 sm:py-3 rounded-xl bg-[#7a1636] text-white font-bold text-xs sm:text-sm hover:bg-[#62102b] transition-colors cursor-pointer shadow-xs"
               >
                 Log Masuk Petugas
               </button>
             </form>
 
-            <div className="mt-6 p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-800 text-left max-w-sm">
+            <div className="mt-4 sm:mt-6 p-2.5 sm:p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-[10px] sm:text-[11px] text-amber-800 text-left max-w-sm">
               <span className="font-bold block mb-0.5">Nota Keselamatan:</span>
               PIN ini bertujuan mengelakkan akses tidak sengaja oleh pengunjung pameran. Sila rujuk ketua teknikal bertugas jika anda terlupa PIN akses petugas.
             </div>
           </div>
         ) : (
           /* Authenticated Dashboard View */
-          <div className="p-6 overflow-y-auto space-y-6 flex-1">
+          <div className="p-3 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 flex-1 min-h-0">
             {/* Quick Actions & Diagnostics */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {/* Emergency Home Reset */}

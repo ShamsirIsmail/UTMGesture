@@ -58,9 +58,9 @@ export const Header: React.FC<HeaderProps> = ({
   const { t, language, toggleLanguage } = useTranslation();
 
   return (
-    <header className="relative z-30 w-full px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-stone-200/80 bg-white/95 backdrop-blur-md shadow-xs">
+    <header className="relative z-30 w-full px-3 sm:px-6 py-1.5 sm:py-2.5 flex items-center justify-between gap-2 border-b border-stone-200/80 bg-white/95 backdrop-blur-md shadow-xs safe-area-px">
       {/* Left: UTM Brand Emblem + Home Link */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <button
           onClick={onGoHome}
           className="hover:opacity-90 transition-opacity focus:outline-none cursor-pointer"
@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
               sfx.playClick();
               onOpenLeaderboard();
             }}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200/70 text-amber-900 text-xs font-bold hover:bg-amber-100 transition-colors cursor-pointer"
+            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200/70 text-amber-900 text-xs font-bold hover:bg-amber-100 transition-colors cursor-pointer"
           >
             <Trophy className="w-3.5 h-3.5 text-amber-600" />
             <span>{t('leaderboard')}</span>
@@ -86,7 +86,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Center: Difficulty Tier Pills */}
       {screen !== 'WELCOME' && screen !== 'LEADERBOARD' && (
-        <div className="flex items-center rounded-full bg-stone-100 p-0.5 border border-stone-200/80 text-xs">
+        <div className="hidden sm:flex items-center rounded-full bg-stone-100 p-0.5 border border-stone-200/80 text-xs">
           {(['CASUAL', 'CHALLENGE', 'MASTER'] as DifficultyLevel[]).map((lvl, i) => {
             const active = difficulty === lvl;
             const labelKey =

@@ -134,10 +134,11 @@ export const HudPanel: React.FC<HudPanelProps> = ({
   }, [drawCanvas]);
 
   return (
-    <div className="absolute left-4 top-4 z-20 w-48 sm:w-56 rounded-2xl bg-white/95 border border-stone-200/90 p-2.5 shadow-exhibition backdrop-blur-md">
-      {/* Header with Camera status */}
-      <div className="flex items-center justify-between mb-1.5 px-0.5">
-        <div className="flex items-center gap-1.5">
+    <>
+      {/* 1. Mobile Compact HUD Bar (Screens under md / Mobile Landscape) */}
+      <div className="absolute left-3 top-3 z-20 md:hidden flex items-center gap-1.5 pointer-events-auto safe-area-pl">
+        {/* Tracking Status Pill */}
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 border border-stone-200/90 shadow-xs backdrop-blur-md">
           <span
             className={`w-2 h-2 rounded-full ${
               controlMode === 'CAMERA'
@@ -147,74 +148,107 @@ export const HudPanel: React.FC<HudPanelProps> = ({
                 : 'bg-blue-400'
             }`}
           />
-          <span className="text-[11px] font-bold text-stone-800">
-            {controlMode === 'CAMERA' ? t('aiCamera') : t('mousePreview')}
+          <span className="text-[10px] font-bold text-stone-800">
+            {controlMode === 'CAMERA'
+              ? handDetected
+                ? t('trackingActive')
+                : t('raiseHand')
+              : t('mousePreview')}
           </span>
         </div>
-        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-stone-100 text-[#7a1636]">
-          {difficulty}
-        </span>
+
+        {/* Pinch Boost Indicator Pill */}
+        {isPinching && (
+          <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-sky-500 text-white font-black text-[10px] shadow-xs animate-pulse">
+            <Zap className="w-3 h-3" />
+            <span>2×</span>
+          </div>
+        )}
       </div>
 
-      {/* Video / Skeleton Canvas */}
-      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 border border-stone-200/80">
-        {controlMode === 'CAMERA' ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-cover transform -scale-x-100"
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-stone-50">
-            <Camera className="w-5 h-5 text-stone-400 mb-1" />
-            <span className="text-[8.5px] text-stone-500 leading-tight">
-              {t('holdClickTip')}
+      {/* 2. Desktop & Tablet Full HUD Panel (Screens md and above) */}
+      <div className="absolute left-4 top-4 z-20 hidden md:block w-48 sm:w-56 rounded-2xl bg-white/95 border border-stone-200/90 p-2.5 shadow-exhibition backdrop-blur-md safe-area-pl">
+        {/* Header with Camera status */}
+        <div className="flex items-center justify-between mb-1.5 px-0.5">
+          <div className="flex items-center gap-1.5">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                controlMode === 'CAMERA'
+                  ? handDetected
+                    ? 'bg-emerald-500 animate-pulse'
+                    : 'bg-amber-400'
+                  : 'bg-blue-400'
+              }`}
+            />
+            <span className="text-[11px] font-bold text-stone-800">
+              {controlMode === 'CAMERA' ? t('aiCamera') : t('mousePreview')}
             </span>
           </div>
-        )}
-        <canvas
-          ref={canvasRef}
-          width={240}
-          height={180}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-        />
-      </div>
+          <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-stone-100 text-[#7a1636]">
+            {difficulty}
+          </span>
+        </div>
 
-      {/* Tracking feedback banner */}
-      <div className="mt-2 space-y-1 text-center">
-        {controlMode === 'CAMERA' ? (
-          handDetected ? (
-            <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg bg-emerald-50 text-emerald-800 text-[10.5px] font-semibold border border-emerald-200/60">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
-              <span>{t('trackingActive')}</span>
-            </div>
+        {/* Video / Skeleton Canvas */}
+        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 border border-stone-200/80">
+          {controlMode === 'CAMERA' ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover transform -scale-x-100"
+            />
           ) : (
-            <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg bg-amber-50 text-amber-800 text-[10.5px] font-semibold border border-amber-200/60 animate-pulse">
-              <Hand className="w-3 h-3 text-amber-600 shrink-0" />
-              <span>{t('raiseHand')}</span>
+            <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-stone-50">
+              <Camera className="w-5 h-5 text-stone-400 mb-1" />
+              <span className="text-[8.5px] text-stone-500 leading-tight">
+                {t('holdClickTip')}
+              </span>
             </div>
-          )
-        ) : (
-          <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg bg-sky-50 text-sky-800 text-[10.5px] font-semibold border border-sky-200/60">
-            <MousePointer className="w-3 h-3 text-sky-600 shrink-0" />
-            <span>{t('mousePreview')}</span>
-          </div>
-        )}
+          )}
+          <canvas
+            ref={canvasRef}
+            width={240}
+            height={180}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+          />
+        </div>
 
-        {/* Pinch Boost Indicator */}
-        <div
-          className={`flex items-center justify-center gap-1 py-1 px-2 rounded-lg text-[10px] font-bold transition-all ${
-            isPinching
-              ? 'bg-sky-500 text-white shadow-xs'
-              : 'bg-stone-50 text-stone-500 border border-stone-200/60'
-          }`}
-        >
-          <Zap className="w-3 h-3 shrink-0" />
-          <span>{isPinching ? t('turboActive') : controlMode === 'CAMERA' ? t('pinchTip') : t('holdClickTip')}</span>
+        {/* Tracking feedback banner */}
+        <div className="mt-2 space-y-1 text-center">
+          {controlMode === 'CAMERA' ? (
+            handDetected ? (
+              <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg bg-emerald-50 text-emerald-800 text-[10.5px] font-semibold border border-emerald-200/60">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                <span>{t('trackingActive')}</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg bg-amber-50 text-amber-800 text-[10.5px] font-semibold border border-amber-200/60 animate-pulse">
+                <Hand className="w-3 h-3 text-amber-600 shrink-0" />
+                <span>{t('raiseHand')}</span>
+              </div>
+            )
+          ) : (
+            <div className="flex items-center justify-center gap-1.5 py-1 px-2 rounded-lg bg-sky-50 text-sky-800 text-[10.5px] font-semibold border border-sky-200/60">
+              <MousePointer className="w-3 h-3 text-sky-600 shrink-0" />
+              <span>{t('mousePreview')}</span>
+            </div>
+          )}
+
+          {/* Pinch Boost Indicator */}
+          <div
+            className={`flex items-center justify-center gap-1 py-1 px-2 rounded-lg text-[10px] font-bold transition-all ${
+              isPinching
+                ? 'bg-sky-500 text-white shadow-xs'
+                : 'bg-stone-50 text-stone-500 border border-stone-200/60'
+            }`}
+          >
+            <Zap className="w-3 h-3 shrink-0" />
+            <span>{isPinching ? t('turboActive') : controlMode === 'CAMERA' ? t('pinchTip') : t('holdClickTip')}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

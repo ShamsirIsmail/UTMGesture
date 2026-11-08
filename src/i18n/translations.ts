@@ -243,6 +243,18 @@ export const TRANSLATIONS = {
     statusReady: 'Sedia & Berfungsi',
     statusError: 'Ralat Dikesan',
     resetToWelcome: 'Set Semula ke Skrin Utama',
+    
+    // V3.8 Mobile & Tablet Landscape System
+    rotateDeviceTitle: 'Pusingkan Peranti Anda',
+    rotateDeviceSubtitle: 'Untuk pengalaman bermain yang lebih baik, sila pusingkan telefon atau tablet anda ke posisi melintang.',
+    gameSuspendedTitle: 'Permainan Dijeda',
+    gameSuspendedNotice: 'Peranti dipusingkan semasa permainan. Sila pusingkan semula ke posisi melintang untuk menyambung.',
+    rotationUnrankedNotice: 'Untuk memastikan rekod masa papan skor kekal adil, pusingan ini telah ditandakan sebagai latihan.',
+    restartRankedRound: 'Mula Semula (Pusingan Rasmi)',
+    resumePracticeRound: 'Sambung Sebagai Latihan',
+    mobileLandscapeOnly: 'Mod Melintang Diperlukan',
+    palmShieldNotSupportedCasual: 'Perisai aktif pada tahap Cabaran & Pakar AI sahaja.',
+    unrankedRunBadge: 'Mod Latihan (Tidak Direkod)',
   },
 
   en: {
@@ -484,6 +496,18 @@ export const TRANSLATIONS = {
     statusReady: 'Ready & Tracking',
     statusError: 'Error Detected',
     resetToWelcome: 'Reset to Welcome Screen',
+
+    // V3.8 Mobile & Tablet Landscape System
+    rotateDeviceTitle: 'Rotate Your Device',
+    rotateDeviceSubtitle: 'For the best experience, please rotate your phone or tablet to landscape mode.',
+    gameSuspendedTitle: 'Game Paused',
+    gameSuspendedNotice: 'Device was rotated during gameplay. Please rotate back to landscape to continue.',
+    rotationUnrankedNotice: 'To ensure fair exhibition timing records, this session has been marked as practice.',
+    restartRankedRound: 'Restart Ranked Round',
+    resumePracticeRound: 'Resume as Practice',
+    mobileLandscapeOnly: 'Landscape Mode Required',
+    palmShieldNotSupportedCasual: 'Shield is active in Challenge & Master AI levels only.',
+    unrankedRunBadge: 'Practice Run (Unranked)',
   },
 } as const;
 

@@ -142,47 +142,47 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
       onMouseMove={handleUserActivity}
       onClick={handleUserActivity}
       onTouchStart={handleUserActivity}
-      className={`relative w-full h-full bg-leaderboard-light overflow-y-auto flex flex-col justify-between transition-all duration-300 ${
-        spectatorMode ? 'p-6 sm:p-10 lg:p-12' : 'p-4 sm:p-6 lg:p-8'
+      className={`relative w-full h-full bg-leaderboard-light overflow-y-auto flex flex-col justify-between transition-all duration-300 safe-area-px ${
+        spectatorMode ? 'p-4 sm:p-8 lg:p-12' : 'p-3 sm:p-6 lg:p-8'
       }`}
     >
       <div className="w-full max-w-6xl mx-auto flex flex-col flex-1">
         {/* ============================================================ */}
         {/* HEADER BAR & CONTROLS */}
         {/* ============================================================ */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-5 border-b border-stone-200/90">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 pb-3 sm:pb-5 border-b border-stone-200/90">
           {/* Title and University Branding */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-2.5 sm:gap-3.5">
             {!spectatorMode && (
               <button
                 onClick={() => {
                   sfx.playClick();
                   onBack();
                 }}
-                className="p-2.5 rounded-2xl bg-white border border-stone-200 text-stone-700 hover:bg-stone-50 hover:border-stone-300 transition-colors shadow-2xs cursor-pointer focus:outline-none"
+                className="p-1.5 sm:p-2.5 rounded-xl sm:rounded-2xl bg-white border border-stone-200 text-stone-700 hover:bg-stone-50 hover:border-stone-300 transition-colors shadow-2xs cursor-pointer focus:outline-none"
                 title={t('back')}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
 
             <div>
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-2xl bg-amber-500/10 border border-amber-400/30 text-amber-600 shadow-2xs">
-                  <Trophy className={spectatorMode ? 'w-7 h-7 text-amber-500' : 'w-5 h-5 text-amber-500'} />
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <div className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-amber-500/10 border border-amber-400/30 text-amber-600 shadow-2xs">
+                  <Trophy className={spectatorMode ? 'w-5 h-5 sm:w-7 sm:h-7 text-amber-500' : 'w-4 h-4 sm:w-5 sm:h-5 text-amber-500'} />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-black uppercase tracking-wider text-[#7a1636] bg-[#7a1636]/10 px-2 py-0.5 rounded-full">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#7a1636] bg-[#7a1636]/10 px-2 py-0.5 rounded-full">
                       {t('hallOfFame')}
                     </span>
-                    <span className="text-[11px] font-semibold text-stone-400">
+                    <span className="text-[10px] sm:text-[11px] font-semibold text-stone-400 hidden xs:inline">
                       Ziarah Kasih & Cakna Komuniti UTM
                     </span>
                   </div>
                   <h1
-                    className={`font-serif font-black text-stone-900 tracking-tight ${
-                      spectatorMode ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-2xl sm:text-3xl'
+                    className={`font-serif font-black text-stone-900 tracking-tight leading-tight ${
+                      spectatorMode ? 'text-xl sm:text-3xl lg:text-5xl' : 'text-lg sm:text-2xl md:text-3xl'
                     }`}
                   >
                     {t('leaderboardTitle')}

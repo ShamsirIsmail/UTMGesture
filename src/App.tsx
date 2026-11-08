@@ -15,6 +15,7 @@ import { GameplayScreen } from './screens/GameplayScreen';
 import { CompleteScreen } from './screens/CompleteScreen';
 import { LeaderboardScreen } from './screens/LeaderboardScreen';
 import { VoiceCaptionBanner } from './components/VoiceCaptionBanner';
+import { OrientationGuard } from './components/OrientationGuard';
 import { sfx } from './services/audioEngine';
 import { voice } from './services/voiceGuidance';
 import { createHandLandmarker, isHandLandmarkerReady, detectHand } from './services/mediapipe';
@@ -28,6 +29,7 @@ function AppContent() {
   const [previousScreen, setPreviousScreen] = useState<ScreenState>('WELCOME');
   const [controlMode, setControlMode] = useState<ControlMode>('CAMERA');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('CASUAL');
+  const [isPracticeRun, setIsPracticeRun] = useState(false);
 
   // UI & Operator Controls
   const [sfxEnabled, setSfxEnabled] = useState(() => sfx.enabled);
@@ -212,6 +214,7 @@ function AppContent() {
     setGlitchHits(0);
     setMaxCombo(0);
     setHandDetected(false);
+    setIsPracticeRun(false);
   }, []);
 
   const startGame = useCallback(() => {
@@ -219,6 +222,7 @@ function AppContent() {
     setElapsed(0);
     setGlitchHits(0);
     setMaxCombo(0);
+    setIsPracticeRun(false);
     setGameRound((r) => r + 1);
     setScreen('GAMEPLAY');
   }, []);
@@ -230,6 +234,7 @@ function AppContent() {
     setElapsed(0);
     setGlitchHits(0);
     setMaxCombo(0);
+    setIsPracticeRun(false);
     setGameRound((r) => r + 1);
     setScreen('GAMEPLAY');
   }, []);
@@ -378,7 +383,7 @@ function AppContent() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen min-h-[600px] overflow-hidden bg-[#faf9f6] text-stone-900 font-sans select-none flex flex-col">
+    <div className="relative w-full h-full h-[100dvh] overflow-hidden bg-[#faf9f6] text-stone-900 font-sans select-none flex flex-col">
       {/* Exhibition Header Bar */}
       <Header
         screen={screen}
@@ -475,6 +480,7 @@ function AppContent() {
             onHome={goHome}
             onOpenLeaderboard={openLeaderboard}
             streamRef={streamRef}
+            isPracticeRun={isPracticeRun}
           />
         )}
 
@@ -488,6 +494,7 @@ function AppContent() {
 
       {/* Exhibition Footer Bar */}
       <Footer
+        screen={screen}
         controlMode={controlMode}
         modelLoaded={modelLoaded}
         onOpenOperatorModal={() => setIsOperatorModalOpen(true)}
@@ -505,6 +512,14 @@ function AppContent() {
 
       {/* Real-time Subtitles / Voice Caption Banner */}
       <VoiceCaptionBanner />
+
+      {/* Mobile & Tablet Landscape Orientation Guard System */}
+      <OrientationGuard
+        isGameplay={screen === 'GAMEPLAY'}
+        onRestartGameplay={startGame}
+        onResumePractice={() => setIsPracticeRun(true)}
+        isPracticeRun={isPracticeRun}
+      />
     </div>
   );
 }

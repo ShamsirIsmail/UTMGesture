@@ -44,6 +44,7 @@ interface CompleteScreenProps {
   onHome: () => void;
   onOpenLeaderboard: () => void;
   streamRef?: React.RefObject<MediaStream | null>;
+  isPracticeRun?: boolean;
 }
 
 export const CompleteScreen: React.FC<CompleteScreenProps> = ({
@@ -57,6 +58,7 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
   onHome,
   onOpenLeaderboard,
   streamRef,
+  isPracticeRun = false,
 }) => {
   console.log('[CompleteScreen] Mounted with difficulty:', difficulty);
   const { t, language } = useTranslation();
@@ -229,14 +231,14 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
       : t('diffMaster');
 
   return (
-    <div className="relative w-full h-full min-h-0 bg-complete-light overflow-y-auto overscroll-contain p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
+    <div className="relative w-full h-full min-h-0 bg-complete-light overflow-y-auto overscroll-contain p-3 sm:p-6 lg:p-8 flex flex-col items-center justify-center safe-area-px">
       {/* ============================================================ */}
       {/* PHASE 1: CINEMATIC CELEBRATION SEQUENCE */}
       {/* ============================================================ */}
       {animationPhase === 'CELEBRATING' ? (
         <div
           onClick={skipCelebration}
-          className="w-full max-w-xl mx-auto rounded-3xl bg-white/95 backdrop-blur-md border border-amber-200/90 shadow-exhibition-lg p-8 sm:p-12 text-center animate-scaleUp relative overflow-hidden cursor-pointer my-auto"
+          className="w-full max-w-xl mx-auto rounded-3xl bg-white/95 backdrop-blur-md border border-amber-200/90 shadow-exhibition-lg p-5 sm:p-8 md:p-12 text-center animate-scaleUp relative overflow-hidden cursor-pointer my-auto"
         >
           {/* Subtle Warm Radial Glow */}
           <div className="absolute inset-0 bg-gradient-to-b from-amber-100/40 via-rose-50/20 to-transparent pointer-events-none" />
@@ -258,18 +260,18 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
           </div>
 
           {/* Celebration Achievement Emblem */}
-          <div className="relative inline-flex items-center justify-center mb-5">
+          <div className="relative inline-flex items-center justify-center mb-3 sm:mb-5">
             <div className="absolute inset-0 rounded-full bg-amber-400/20 filter blur-xl animate-pulse" />
-            <div className="relative p-5 sm:p-6 rounded-full bg-gradient-to-tr from-[#7a1636] to-[#a32249] text-amber-300 shadow-exhibition border-2 border-amber-300/40">
-              <Trophy className="w-12 h-12 sm:w-16 sm:h-16 fill-amber-300" />
+            <div className="relative p-4 sm:p-6 rounded-full bg-gradient-to-tr from-[#7a1636] to-[#a32249] text-amber-300 shadow-exhibition border-2 border-amber-300/40">
+              <Trophy className="w-10 h-10 sm:w-16 sm:h-16 fill-amber-300" />
             </div>
           </div>
 
-          <div className="relative z-10 space-y-2">
-            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#7a1636] text-white font-black text-xs uppercase tracking-widest shadow-2xs">
+          <div className="relative z-10 space-y-1.5 sm:space-y-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#7a1636] text-white font-black text-[10px] sm:text-xs uppercase tracking-widest shadow-2xs">
               🌿 {t('missionComplete')} 🌿
             </div>
-            <h1 className="text-2xl sm:text-4xl font-serif font-black text-stone-900 mt-2">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-serif font-black text-stone-900 mt-1 sm:mt-2">
               {t('celebrationSubtitle')}
             </h1>
             <p className="text-xs sm:text-sm text-stone-500 font-medium">
@@ -278,13 +280,13 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
           </div>
 
           {/* Skip Option Pill */}
-          <div className="relative z-10 mt-8">
+          <div className="relative z-10 mt-4 sm:mt-8">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 skipCelebration();
               }}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-600 text-xs font-semibold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-600 text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer"
             >
               <span>{t('skipCelebration')}</span>
               <FastForward className="w-3.5 h-3.5" />
@@ -295,39 +297,39 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
         /* ============================================================ */
         /* PHASE 2: RESULT PRESENTATION */
         /* ============================================================ */
-        <div className="w-full max-w-3xl mx-auto rounded-3xl bg-white/95 backdrop-blur-xs border border-stone-200/90 shadow-exhibition p-5 sm:p-8 text-center animate-fadeIn my-auto relative">
+        <div className="w-full max-w-3xl mx-auto rounded-3xl bg-white/95 backdrop-blur-xs border border-stone-200/90 shadow-exhibition p-4 sm:p-7 text-center animate-fadeIn my-auto relative">
           {/* 1. TOP CELEBRATORY BANNER (LAUREL RIBBON STYLE) */}
-          <div className="flex items-center justify-center gap-2 mb-2 sm:mb-3">
-            <span className="text-amber-500 text-base sm:text-lg select-none">🌿</span>
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-[#7a1636] text-white font-black text-xs sm:text-sm tracking-wider uppercase shadow-xs">
+          <div className="flex items-center justify-center gap-2 mb-1.5 sm:mb-3">
+            <span className="text-amber-500 text-sm sm:text-lg select-none">🌿</span>
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1 sm:py-2 rounded-full bg-[#7a1636] text-white font-black text-xs sm:text-sm tracking-wider uppercase shadow-xs">
               <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-300 text-amber-300" />
               <span>{t('missionComplete')}</span>
             </div>
-            <span className="text-amber-500 text-base sm:text-lg select-none transform -scale-x-100">🌿</span>
+            <span className="text-amber-500 text-sm sm:text-lg select-none transform -scale-x-100">🌿</span>
           </div>
 
           {/* 2. Main Title & Encouraging Subtitle */}
-          <h1 className="text-xl sm:text-3xl lg:text-4xl font-serif font-black text-stone-900 mt-1">
+          <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-serif font-black text-stone-900 mt-0.5 sm:mt-1">
             {t('futureStarts')}
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 font-medium mt-0.5">
+          <p className="text-[11px] sm:text-sm text-stone-600 font-medium mt-0.5">
             {t('missionCompleteSubtitle')}
           </p>
 
           {/* ============================================================ */}
           {/* 3. PERFORMANCE STATISTICS CARD (VISUAL FOCUS: FINAL TIME) */}
           {/* ============================================================ */}
-          <div className="my-4 sm:my-5 p-3.5 sm:p-5 rounded-2xl bg-stone-50/90 border border-stone-200/90 shadow-2xs">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 items-center divide-y sm:divide-y-0 sm:divide-x divide-stone-200">
+          <div className="my-3 sm:my-5 p-2.5 sm:p-5 rounded-2xl bg-stone-50/90 border border-stone-200/90 shadow-2xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 items-center divide-y sm:divide-y-0 sm:divide-x divide-stone-200">
               {/* Metric 1: Performance Grade */}
-              <div className="flex items-center gap-2.5 sm:gap-3 p-1">
+              <div className="flex items-center gap-2 sm:gap-3 p-1">
                 <div
-                  className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl border-2 flex items-center justify-center font-black text-xl sm:text-2xl shadow-xs shrink-0 ${rankInfo.color}`}
+                  className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl border-2 flex items-center justify-center font-black text-lg sm:text-2xl shadow-xs shrink-0 ${rankInfo.color}`}
                 >
                   {rankInfo.grade}
                 </div>
                 <div className="text-left">
-                  <div className="text-[10px] uppercase font-bold text-stone-400 leading-tight">
+                  <div className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400 leading-tight">
                     {difficultyLabel} {t('performanceGrade')}
                   </div>
                   <div className="text-xs sm:text-sm font-black text-stone-900 truncate max-w-[120px]">
@@ -338,32 +340,32 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
 
               {/* Metric 2: Final Time (Large visual centerpiece) */}
               <div className="p-1 sm:pl-4 text-center sm:text-left">
-                <div className="text-[10px] uppercase font-bold text-stone-400">
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400">
                   {t('yourFinalTime')}
                 </div>
-                <div className="text-2xl sm:text-4xl font-mono font-black text-[#7a1636]">
+                <div className="text-xl sm:text-4xl font-mono font-black text-[#7a1636]">
                   {elapsedSeconds.toFixed(1)}
                   <span className="text-xs sm:text-sm font-bold ml-0.5 text-stone-600">s</span>
                 </div>
               </div>
 
               {/* Metric 3: Best Combo */}
-              <div className="pt-2 sm:pt-0 sm:pl-4 text-center sm:text-left">
-                <div className="text-[10px] uppercase font-bold text-stone-400">
+              <div className="pt-1.5 sm:pt-0 sm:pl-4 text-center sm:text-left">
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400">
                   {t('bestCombo')}
                 </div>
-                <div className="text-lg sm:text-2xl font-black text-emerald-600 font-mono">
+                <div className="text-base sm:text-2xl font-black text-emerald-600 font-mono">
                   {maxCombo}×
                 </div>
               </div>
 
               {/* Metric 4: Hazard Hits */}
-              <div className="pt-2 sm:pt-0 sm:pl-4 text-center sm:text-left">
-                <div className="text-[10px] uppercase font-bold text-stone-400">
+              <div className="pt-1.5 sm:pt-0 sm:pl-4 text-center sm:text-left">
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-stone-400">
                   {t('hazardHits')}
                 </div>
                 <div
-                  className={`text-lg sm:text-2xl font-black font-mono ${
+                  className={`text-base sm:text-2xl font-black font-mono ${
                     glitchHits === 0 ? 'text-emerald-600' : 'text-rose-600'
                   }`}
                 >
@@ -376,20 +378,29 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
           {/* ============================================================ */}
           {/* 4. LEADERBOARD SUBMISSION SECTION */}
           {/* ============================================================ */}
-          <div className="mb-4 sm:mb-5 p-3.5 sm:p-5 rounded-2xl bg-white border border-[#7a1636]/25 shadow-xs text-left relative overflow-hidden">
+          <div className="mb-3 sm:mb-5 p-3 sm:p-5 rounded-2xl bg-white border border-[#7a1636]/25 shadow-xs text-left relative overflow-hidden">
             <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-200/50 via-amber-100/20 to-transparent pointer-events-none rounded-tr-2xl" />
 
-            {!isSubmitted && !isSkipped ? (
-              <form onSubmit={handleSubmit} className="space-y-3">
+            {isPracticeRun ? (
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-center animate-fadeIn">
+                <span className="font-bold text-amber-900 text-xs block mb-1">
+                  ⚠️ {t('unrankedRunBadge')}
+                </span>
+                <p className="text-[11px] text-stone-600 max-w-sm mx-auto">
+                  {t('rotationUnrankedNotice')}
+                </p>
+              </div>
+            ) : !isSubmitted && !isSkipped ? (
+              <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600">
-                    <Trophy className="w-4 h-4 text-amber-600" />
+                  <div className="p-1 sm:p-1.5 rounded-lg bg-amber-500/10 text-amber-600">
+                    <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" />
                   </div>
                   <div>
                     <h2 className="font-bold text-stone-900 text-xs sm:text-sm">
                       {t('joinLeaderboardPrompt')}
                     </h2>
-                    <p className="text-[11px] text-stone-500">{t('joinLeaderboardDesc')}</p>
+                    <p className="text-[10px] sm:text-[11px] text-stone-500">{t('joinLeaderboardDesc')}</p>
                   </div>
                 </div>
 
@@ -425,7 +436,7 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
                       value={nickname}
                       onChange={(e) => setNickname(e.target.value)}
                       placeholder={t('nicknamePlaceholder')}
-                      className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs sm:text-sm focus:outline-none focus:border-[#7a1636] focus:ring-2 focus:ring-[#7a1636]/20 bg-stone-50/50"
+                      className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-base sm:text-sm focus:outline-none focus:border-[#7a1636] focus:ring-2 focus:ring-[#7a1636]/20 bg-stone-50/50"
                     />
                   </div>
 
@@ -433,7 +444,7 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#7a1636] text-white font-bold text-xs sm:text-sm shadow-xs hover:bg-[#62102b] disabled:opacity-50 transition-all cursor-pointer self-end"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 sm:py-2.5 rounded-xl bg-[#7a1636] text-white font-bold text-xs sm:text-sm shadow-xs hover:bg-[#62102b] disabled:opacity-50 transition-all cursor-pointer self-end"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>{isSubmitting ? t('submitting') : t('submitScore')}</span>
@@ -445,7 +456,7 @@ export const CompleteScreen: React.FC<CompleteScreenProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsSkipped(true)}
-                    className="text-[11px] text-stone-400 hover:text-stone-700 transition-colors underline cursor-pointer"
+                    className="text-[10px] sm:text-[11px] text-stone-400 hover:text-stone-700 transition-colors underline cursor-pointer"
                   >
                     {t('skipLeaderboard')}
                   </button>
