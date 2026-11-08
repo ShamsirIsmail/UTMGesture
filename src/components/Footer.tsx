@@ -25,11 +25,11 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="flex items-center gap-2">
         <Info className="w-3.5 h-3.5 text-[#7a1636]" />
         <span>
-          Mod:{' '}
+          {t('modeLabel')}:{' '}
           <strong className="text-stone-800">
             {controlMode === 'CAMERA'
               ? modelLoaded
-                ? 'AI MediaPipe (Jari Telunjuk #8 + Cubit #4)'
+                ? t('trackingStatusCamera')
                 : t('aiCamera')
               : t('mousePreviewNotice')}
           </strong>

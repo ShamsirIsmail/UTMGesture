@@ -208,7 +208,7 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                   {isCyclingPaused || isUserInteracting ? (
                     <>
                       <Play className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                      <span>{isUserInteracting ? 'Interaksi (15s)' : t('pauseCycle')}</span>
+                      <span>{isUserInteracting ? t('interactionPause') : t('pauseCycle')}</span>
                     </>
                   ) : (
                     <>
@@ -243,7 +243,7 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                 loadData(activeTab);
               }}
               className="p-2 rounded-2xl bg-white border border-stone-200 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors cursor-pointer shadow-2xs"
-              title="Kemas Kini Rekod"
+              title={t('refreshRecords')}
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
@@ -304,8 +304,8 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                         nickname={top2.nickname}
                         size={spectatorMode ? 'xl' : 'lg'}
                       />
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 font-black text-[11px] border border-white shadow-xs">
-                        #2 NAIB JUARA
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 font-black text-[11px] border border-white shadow-xs whitespace-nowrap">
+                        {t('rank2Badge')}
                       </div>
                     </div>
 
@@ -329,12 +329,12 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                     </div>
 
                     <div className="mt-2 text-[10px] uppercase font-bold text-stone-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200/60">
-                      {top2.controlMode === 'CAMERA' ? 'Kamera AI' : 'Tetikus'}
+                      {top2.controlMode === 'CAMERA' ? t('aiCamera') : t('mousePreview')}
                     </div>
                   </div>
                 ) : (
                   <div className="w-full h-36 rounded-3xl border-2 border-dashed border-stone-200 bg-stone-50/50 flex flex-col items-center justify-center p-4 text-center">
-                    <span className="font-bold text-xs text-stone-400">#2 Menanti Rekod</span>
+                    <span className="font-bold text-xs text-stone-400">#2 {t('awaitingRecord')}</span>
                   </div>
                 )}
               </div>
@@ -351,7 +351,7 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                     {/* Juara Gold Ribbon */}
                     <div className="absolute -top-3.5 right-4 px-3.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-stone-950 font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-xs flex items-center gap-1.5">
                       <Trophy className="w-3.5 h-3.5 fill-stone-950" />
-                      <span>JUARA ACARA</span>
+                      <span>{t('champion')}</span>
                     </div>
 
                     <div className="relative mb-3 mt-3">
@@ -361,8 +361,8 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                         nickname={top1.nickname}
                         size={spectatorMode ? '2xl' : 'xl'}
                       />
-                      <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-amber-400 text-stone-950 font-black text-xs border-2 border-white shadow-xs">
-                        #1 JUARA
+                      <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-amber-400 text-stone-950 font-black text-xs border-2 border-white shadow-xs whitespace-nowrap">
+                        {t('rank1Badge')}
                       </div>
                     </div>
 
@@ -382,17 +382,17 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                       >
                         {top1.timeSeconds}
                       </span>
-                      <span className="text-sm font-bold text-[#7a1636]">saat</span>
+                      <span className="text-sm font-bold text-[#7a1636] ml-0.5">{t('secondsUnit')}</span>
                     </div>
 
                     <div className="mt-2 text-[11px] uppercase font-bold text-amber-900 bg-amber-50 px-3 py-0.5 rounded-full border border-amber-300">
-                      {top1.controlMode === 'CAMERA' ? 'Kamera AI' : 'Tetikus'}
+                      {top1.controlMode === 'CAMERA' ? t('aiCamera') : t('mousePreview')}
                     </div>
                   </div>
                 ) : (
                   <div className="w-full h-44 rounded-3xl border-2 border-dashed border-amber-300 bg-amber-50/30 flex flex-col items-center justify-center p-4 text-center">
                     <Trophy className="w-8 h-8 text-amber-400 mb-1" />
-                    <span className="font-bold text-sm text-amber-800">#1 Menanti Juara</span>
+                    <span className="font-bold text-sm text-amber-800">{t('awaitingChampion')}</span>
                   </div>
                 )}
               </div>
@@ -413,8 +413,8 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                         nickname={top3.nickname}
                         size={spectatorMode ? 'xl' : 'lg'}
                       />
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-amber-700 text-white font-black text-[11px] border border-white shadow-xs">
-                        #3 TEMPAT KE-3
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-amber-700 text-white font-black text-[11px] border border-white shadow-xs whitespace-nowrap">
+                        {t('rank3Badge')}
                       </div>
                     </div>
 
@@ -438,12 +438,12 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                     </div>
 
                     <div className="mt-2 text-[10px] uppercase font-bold text-stone-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200/60">
-                      {top3.controlMode === 'CAMERA' ? 'Kamera AI' : 'Tetikus'}
+                      {top3.controlMode === 'CAMERA' ? t('aiCamera') : t('mousePreview')}
                     </div>
                   </div>
                 ) : (
                   <div className="w-full h-36 rounded-3xl border-2 border-dashed border-stone-200 bg-stone-50/50 flex flex-col items-center justify-center p-4 text-center">
-                    <span className="font-bold text-xs text-stone-400">#3 Menanti Rekod</span>
+                    <span className="font-bold text-xs text-stone-400">#3 {t('awaitingRecord')}</span>
                   </div>
                 )}
               </div>
@@ -499,7 +499,7 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                           </td>
                           <td className="py-3.5 px-5 text-center">
                             <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-stone-100 text-stone-700 border border-stone-200/60">
-                              {entry.controlMode === 'CAMERA' ? 'Kamera AI' : 'Tetikus'}
+                              {entry.controlMode === 'CAMERA' ? t('aiCamera') : t('mousePreview')}
                             </span>
                           </td>
                           <td className="py-3.5 px-5 text-right font-mono font-black text-stone-900 text-sm sm:text-base">
@@ -526,7 +526,7 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
               {t('noRecordsYet')}
             </h3>
             <p className="text-sm text-stone-500 max-w-md">
-              Jadilah peserta pertama menyelesaikan misi kategori ini menggunakan Kawalan Tangan AI untuk mengukir nama anda di Dewan Kehormatan UTM!
+              {t('emptyBoardDesc')}
             </p>
           </div>
         )}

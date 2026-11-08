@@ -295,8 +295,14 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <div className="text-left">
-                  <div className="font-bold">Penyertaan: {submissionsEnabled ? 'Buka' : 'Tutup'}</div>
-                  <div className="text-[10px] opacity-80">Borang papan pendahulu</div>
+                  <div className="font-bold">
+                    {language === 'bm'
+                      ? `Penyertaan: ${submissionsEnabled ? 'Buka' : 'Tutup'}`
+                      : `Submissions: ${submissionsEnabled ? 'Open' : 'Closed'}`}
+                  </div>
+                  <div className="text-[10px] opacity-80">
+                    {language === 'bm' ? 'Borang papan pendahulu' : 'Leaderboard form'}
+                  </div>
                 </div>
               </button>
             </div>
@@ -306,7 +312,11 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
               <div className="flex items-center justify-between border-b border-stone-200 pb-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-stone-900">
                   <Volume2 className="w-4 h-4 text-[#7a1636]" />
-                  <span>Kawalan Audio & Suara Panduan Acara</span>
+                  <span>
+                    {language === 'bm'
+                      ? 'Kawalan Audio & Suara Panduan Acara'
+                      : 'Exhibition Audio & Voice Guidance Controls'}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <button
@@ -323,7 +333,7 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                     }}
                     className="px-2.5 py-1 rounded-full bg-stone-800 text-white text-[10px] font-bold cursor-pointer hover:bg-stone-700 transition-colors"
                   >
-                    Uji EN
+                    Test EN
                   </button>
                 </div>
               </div>
@@ -331,7 +341,9 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
               {/* SFX Control Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-stone-200">
-                  <span className="text-xs font-semibold text-stone-800">Kesan Bunyi (SFX)</span>
+                  <span className="text-xs font-semibold text-stone-800">
+                    {language === 'bm' ? 'Kesan Bunyi (SFX)' : 'Sound Effects (SFX)'}
+                  </span>
                   <button
                     onClick={() => {
                       const next = !modalSfxEnabled;
@@ -345,12 +357,20 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                         : 'bg-stone-100 text-stone-500 border border-stone-300'
                     }`}
                   >
-                    {modalSfxEnabled ? 'AKTIF' : 'SENYAP'}
+                    {modalSfxEnabled
+                      ? language === 'bm'
+                        ? 'AKTIF'
+                        : 'ACTIVE'
+                      : language === 'bm'
+                      ? 'SENYAP'
+                      : 'MUTED'}
                   </button>
                 </div>
 
                 <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-stone-200">
-                  <span className="text-[11px] font-medium text-stone-500 w-16">Volum SFX:</span>
+                  <span className="text-[11px] font-medium text-stone-500 w-16">
+                    {language === 'bm' ? 'Volum SFX:' : 'SFX Vol:'}
+                  </span>
                   <input
                     type="range"
                     min="0"
@@ -372,7 +392,9 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
               {/* Voice Narration Control Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-stone-200">
-                  <span className="text-xs font-semibold text-stone-800">Suara Panduan (TTS)</span>
+                  <span className="text-xs font-semibold text-stone-800">
+                    {language === 'bm' ? 'Suara Panduan (TTS)' : 'Voice Narration (TTS)'}
+                  </span>
                   <button
                     onClick={() => {
                       const next = !modalVoiceEnabled;
@@ -386,12 +408,20 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                         : 'bg-stone-100 text-stone-500 border border-stone-300'
                     }`}
                   >
-                    {modalVoiceEnabled ? 'AKTIF' : 'SENYAP'}
+                    {modalVoiceEnabled
+                      ? language === 'bm'
+                        ? 'AKTIF'
+                        : 'ACTIVE'
+                      : language === 'bm'
+                      ? 'SENYAP'
+                      : 'MUTED'}
                   </button>
                 </div>
 
                 <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-stone-200">
-                  <span className="text-[11px] font-medium text-stone-500 w-16">Volum Suara:</span>
+                  <span className="text-[11px] font-medium text-stone-500 w-16">
+                    {language === 'bm' ? 'Volum Suara:' : 'Voice Vol:'}
+                  </span>
                   <input
                     type="range"
                     min="0"
@@ -412,15 +442,24 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
 
               <div className="text-[11px] text-stone-600 flex flex-wrap items-center justify-between gap-1 pt-1">
                 <span>
-                  Suara Melayu Tempatan:{' '}
+                  {language === 'bm' ? 'Suara Melayu Tempatan: ' : 'Local Malay Voice Pack: '}
                   {voice.hasNativeMalayVoice() ? (
-                    <span className="font-bold text-emerald-700">Tersedia (Pertuturan Asli)</span>
+                    <span className="font-bold text-emerald-700">
+                      {language === 'bm'
+                        ? 'Tersedia (Pertuturan Asli)'
+                        : 'Installed (Native Speech)'}
+                    </span>
                   ) : (
-                    <span className="font-bold text-amber-700">Tiada (Mod Perlindungan: Teks Sahaja)</span>
+                    <span className="font-bold text-amber-700">
+                      {language === 'bm'
+                        ? 'Tiada (Mod Perlindungan: Teks Sahaja)'
+                        : 'Not Installed (Safe Subtitle Mode)'}
+                    </span>
                   )}
                 </span>
                 <span className="text-[10px] text-stone-400">
-                  {installedVoices.length} suara sistem dikesan
+                  {installedVoices.length}{' '}
+                  {language === 'bm' ? 'suara sistem dikesan' : 'system voices found'}
                 </span>
               </div>
             </div>
@@ -429,13 +468,19 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
             <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200">
               <div className="flex items-center gap-2 text-xs font-bold text-stone-900 mb-2">
                 <Key className="w-4 h-4 text-[#7a1636]" />
-                <span>Tukar PIN Petugas Acara</span>
+                <span>
+                  {language === 'bm' ? 'Tukar PIN Petugas Acara' : 'Change Operator PIN'}
+                </span>
               </div>
               <form onSubmit={handleSaveNewPin} className="flex items-center gap-2">
                 <input
                   type="text"
                   maxLength={8}
-                  placeholder="PIN Baharu (min. 4 aksara)"
+                  placeholder={
+                    language === 'bm'
+                      ? 'PIN Baharu (min. 4 aksara)'
+                      : 'New PIN (min. 4 characters)'
+                  }
                   value={newPin}
                   onChange={(e) => setNewPin(e.target.value)}
                   className="px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-mono bg-white outline-none focus:border-[#7a1636] flex-1"
@@ -444,12 +489,14 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                   type="submit"
                   className="px-4 py-1.5 rounded-xl bg-stone-900 text-white font-bold text-xs hover:bg-stone-800 transition-colors cursor-pointer"
                 >
-                  Simpan PIN
+                  {language === 'bm' ? 'Simpan PIN' : 'Save PIN'}
                 </button>
               </form>
               {pinChangeSuccess && (
                 <p className="text-[11px] text-emerald-700 font-bold mt-1.5 animate-fadeIn">
-                  PIN petugas berjaya dikemas kini!
+                  {language === 'bm'
+                    ? 'PIN petugas berjaya dikemas kini!'
+                    : 'Operator PIN successfully updated!'}
                 </p>
               )}
             </div>
@@ -458,7 +505,9 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-serif font-black text-sm text-stone-900">
-                  Senarai Rekod ({totalCount} Jumlah)
+                  {language === 'bm'
+                    ? `Senarai Rekod (${totalCount} Jumlah)`
+                    : `Leaderboard Entries (${totalCount} Total)`}
                 </h4>
 
                 {/* Clear All Data */}
@@ -468,22 +517,24 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                     className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold border border-rose-200 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                    <span>Kosongkan Semua</span>
+                    <span>{language === 'bm' ? 'Kosongkan Semua' : 'Clear All'}</span>
                   </button>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-rose-700 font-bold">Pasti?</span>
+                    <span className="text-xs text-rose-700 font-bold">
+                      {language === 'bm' ? 'Pasti?' : 'Confirm?'}
+                    </span>
                     <button
                       onClick={handleClearAll}
                       className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-xs font-bold cursor-pointer"
                     >
-                      Ya, Padam
+                      {language === 'bm' ? 'Ya, Padam' : 'Yes, Delete'}
                     </button>
                     <button
                       onClick={() => setConfirmClear(false)}
                       className="px-2.5 py-1 rounded-full bg-stone-200 text-stone-700 text-xs cursor-pointer"
                     >
-                      Batal
+                      {language === 'bm' ? 'Batal' : 'Cancel'}
                     </button>
                   </div>
                 )}
@@ -504,7 +555,11 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                     }`}
                   >
-                    {tab}
+                    {tab === 'CASUAL'
+                      ? t('diffCasual')
+                      : tab === 'CHALLENGE'
+                      ? t('diffChallenge')
+                      : t('diffMaster')}
                   </button>
                 ))}
               </div>
@@ -514,10 +569,12 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                 <table className="w-full text-left text-xs">
                   <thead className="bg-stone-100 text-stone-600 uppercase text-[10px] tracking-wider sticky top-0">
                     <tr>
-                      <th className="py-2 px-3">Nama</th>
-                      <th className="py-2 px-3">Masa</th>
-                      <th className="py-2 px-3">Foto</th>
-                      <th className="py-2 px-3 text-right">Tindakan</th>
+                      <th className="py-2 px-3">{t('participant')}</th>
+                      <th className="py-2 px-3">{t('time')}</th>
+                      <th className="py-2 px-3">{language === 'bm' ? 'Foto' : 'Photo'}</th>
+                      <th className="py-2 px-3 text-right">
+                        {language === 'bm' ? 'Tindakan' : 'Action'}
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-200">

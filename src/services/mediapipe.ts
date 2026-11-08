@@ -17,6 +17,7 @@ export interface HandTrackingResult {
   indexTip: { x: number; y: number } | null;
   thumbTip: { x: number; y: number } | null;
   isPinching: boolean;
+  isOpenPalm: boolean;
 }
 
 export async function loadMediaPipeModules(): Promise<void> {
@@ -91,7 +92,7 @@ export function detectHand(
   timestampMs: number
 ): HandTrackingResult {
   if (!handLandmarkerInstance) {
-    return { landmarks: null, indexTip: null, thumbTip: null, isPinching: false };
+    return { landmarks: null, indexTip: null, thumbTip: null, isPinching: false, isOpenPalm: false };
   }
 
   try {
@@ -99,8 +100,16 @@ export function detectHand(
 
     if (results.landmarks && results.landmarks.length > 0) {
       const hand = results.landmarks[0] as LandmarkPoint[];
-      const indexTip = hand[8];  // Index fingertip
-      const thumbTip = hand[4];  // Thumb tip
+      const wrist = hand[0];
+      const thumbTip = hand[4];
+      const indexPip = hand[6];
+      const indexTip = hand[8];
+      const middlePip = hand[10];
+      const middleTip = hand[12];
+      const ringPip = hand[14];
+      const ringTip = hand[16];
+      const pinkyPip = hand[18];
+      const pinkyTip = hand[20];
 
       let isPinching = false;
       if (indexTip && thumbTip) {
@@ -108,18 +117,52 @@ export function detectHand(
         isPinching = dist < 0.068;
       }
 
+      // Open Palm Classification: all 5 fingers fully extended and spread
+      let isOpenPalm = false;
+      if (
+        !isPinching &&
+        wrist &&
+        thumbTip &&
+        indexPip &&
+        indexTip &&
+        middlePip &&
+        middleTip &&
+        ringPip &&
+        ringTip &&
+        pinkyPip &&
+        pinkyTip
+      ) {
+        const dWrist = (p: LandmarkPoint) => Math.hypot(p.x - wrist.x, p.y - wrist.y);
+        const indexExtended = dWrist(indexTip) > dWrist(indexPip) * 1.15;
+        const middleExtended = dWrist(middleTip) > dWrist(middlePip) * 1.15;
+        const ringExtended = dWrist(ringTip) > dWrist(ringPip) * 1.15;
+        const pinkyExtended = dWrist(pinkyTip) > dWrist(pinkyPip) * 1.15;
+        const thumbExtended = dWrist(thumbTip) > dWrist(hand[2]) * 1.12;
+
+        const palmSpread = Math.hypot(indexTip.x - pinkyTip.x, indexTip.y - pinkyTip.y) > 0.14;
+
+        isOpenPalm =
+          indexExtended &&
+          middleExtended &&
+          ringExtended &&
+          pinkyExtended &&
+          thumbExtended &&
+          palmSpread;
+      }
+
       return {
         landmarks: hand,
         indexTip: indexTip ? { x: indexTip.x, y: indexTip.y } : null,
         thumbTip: thumbTip ? { x: thumbTip.x, y: thumbTip.y } : null,
         isPinching,
+        isOpenPalm,
       };
     }
   } catch {
     // Ignore transient frame errors
   }
 
-  return { landmarks: null, indexTip: null, thumbTip: null, isPinching: false };
+  return { landmarks: null, indexTip: null, thumbTip: null, isPinching: false, isOpenPalm: false };
 }
 
 export function destroyHandLandmarker(): void {

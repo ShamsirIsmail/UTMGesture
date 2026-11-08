@@ -13,6 +13,7 @@ interface GestureCursorProps {
   handDetected: boolean;
   controlMode: 'CAMERA' | 'MOUSE';
   coreProgress?: number; // 0..1 when hovering core
+  isShieldActive?: boolean;
 }
 
 export const GestureCursor: React.FC<GestureCursorProps> = ({
@@ -22,6 +23,7 @@ export const GestureCursor: React.FC<GestureCursorProps> = ({
   handDetected,
   controlMode,
   coreProgress = 0,
+  isShieldActive = false,
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
   const isActive = controlMode === 'MOUSE' || handDetected;
@@ -37,6 +39,11 @@ export const GestureCursor: React.FC<GestureCursorProps> = ({
       }}
       className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 z-30"
     >
+      {/* Protective Shield Aura (Open Palm gesture) */}
+      {isShieldActive && (
+        <div className="absolute w-22 h-22 rounded-full border-2 border-cyan-400 bg-cyan-400/20 animate-pulse shadow-[0_0_20px_rgba(6,182,212,0.6)]" />
+      )}
+
       {/* 1. Custom Transparent PNG Asset */}
       {!imageFailed ? (
         <div className="relative flex items-center justify-center">

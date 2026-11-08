@@ -17,11 +17,11 @@ export type VoiceEvent =
 
 export const VOICE_SCRIPTS: Record<VoiceEvent, Record<Language, string>> = {
   WELCOME: {
-    bm: 'Selamat datang ke UTM Gesture Quest! Bersedia untuk bermain?',
+    bm: 'Selamat datang ke UTM Gesture Quest! Bersedia untuk mula main?',
     en: 'Welcome to UTM Gesture Quest! Are you ready to play?',
   },
   CALIBRATION: {
-    bm: 'Sila tunjukkan tangan anda di hadapan kamera untuk penentukuran AI.',
+    bm: 'Buka tapak tangan anda di hadapan kamera untuk penentukuran AI.',
     en: 'Please show your hand in front of the camera for AI calibration.',
   },
   HAND_DETECTED: {
@@ -29,19 +29,19 @@ export const VOICE_SCRIPTS: Record<VoiceEvent, Record<Language, string>> = {
     en: 'Great! Your hand has been detected.',
   },
   GAMEPLAY_START: {
-    bm: 'Gerakkan jari telunjuk anda untuk mengumpul sasaran tenaga.',
+    bm: 'Gerakkan jari telunjuk anda untuk kumpul sasaran tenaga.',
     en: 'Move your index finger to collect the energy targets.',
   },
   FINAL_MISSION: {
-    bm: 'Misi terakhir! Kunci kursor pada teras tenaga untuk mengaktifkannya.',
-    en: 'Final mission! Hold cursor on the energy core to activate.',
+    bm: 'Misi terakhir! Halakan penunjuk pada teras tenaga untuk aktifkannya.',
+    en: 'Final mission! Hold your cursor on the energy core to activate.',
   },
   COMPLETION: {
-    bm: 'Tahniah! Anda berjaya menyelesaikan semua misi!',
-    en: 'Congratulations! You have completed all missions!',
+    bm: 'Tahniah! Anda berjaya habiskan misi!',
+    en: 'Congratulations! You have completed the mission!',
   },
   LEADERBOARD: {
-    bm: 'Masa anda telah direkodkan ke dalam papan skor. Tahniah!',
+    bm: 'Masa anda telah direkodkan ke papan skor. Tahniah!',
     en: 'Your time has been recorded in the leaderboard. Congratulations!',
   },
 };

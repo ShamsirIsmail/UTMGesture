@@ -384,6 +384,7 @@ function AppContent() {
             controlMode={controlMode}
             onSelectDifficulty={selectDifficulty}
             onStartGame={startGame}
+            streamRef={streamRef}
           />
         )}
 

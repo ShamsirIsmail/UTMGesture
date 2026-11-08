@@ -115,6 +115,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
   const [feedbackMsgs, setFeedbackMsgs] = useState<FeedbackMsg[]>([]);
   const [activeHoverOrbId, setActiveHoverOrbId] = useState<number | null>(null);
   const [collectedCount, setCollectedCount] = useState(0);
+  const [isShieldActive, setIsShieldActive] = useState(false);
 
   // Developer Debug Mode state
   const [debugMode, setDebugMode] = useState(false);
@@ -161,6 +162,10 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
   const comboRef = useRef(0);
   const maxComboRef = useRef(0);
   const feedbackIdRef = useRef(0);
+  const isShieldActiveRef = useRef(false);
+  const shieldExpiresAtRef = useRef(0);
+  const shieldCooldownUntilRef = useRef(0);
+  const palmStartRef = useRef(0);
   const difficultyRef = useRef(difficulty);
   const controlModeRef = useRef(controlMode);
   const lastParentElapsedReportRef = useRef(0);
@@ -182,7 +187,15 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
     };
   }, []);
 
-  // Developer Debug Mode toggle via key 'D'
+  // Floating feedback popups
+  const showFeedback = useCallback((text: string, x: number, y: number) => {
+    const id = ++feedbackIdRef.current;
+    const msg: FeedbackMsg = { id, text, x, y, ts: performance.now() };
+    setFeedbackMsgs((prev) => [...prev.slice(-3), msg]);
+    setTimeout(() => setFeedbackMsgs((prev) => prev.filter((m) => m.id !== id)), 1500);
+  }, []);
+
+  // Developer Debug Mode toggle via key 'D' & Spacebar Shield for Mouse Mode
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
@@ -190,10 +203,27 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
       if (e.key === 'd' || e.key === 'D') {
         setDebugMode((prev) => !prev);
       }
+      if (e.key === 'w' || e.key === 'W') {
+        const now = performance.now();
+        const elap = Math.max(1, (now - gameStartRef.current) / 1000);
+        onElapsedUpdateRef.current(elap);
+        onCompleteRef.current();
+      }
+      if (e.code === 'Space' && controlModeRef.current === 'MOUSE' && difficultyRef.current !== 'CASUAL') {
+        const now = performance.now();
+        if (now >= shieldCooldownUntilRef.current && !isShieldActiveRef.current) {
+          isShieldActiveRef.current = true;
+          shieldExpiresAtRef.current = now + 3000;
+          shieldCooldownUntilRef.current = now + 8500;
+          setIsShieldActive(true);
+          sfx.playShieldActivate();
+          showFeedback(t('shieldActive'), smoothPosRef.current.x * 100, smoothPosRef.current.y * 100 - 10);
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [showFeedback, t]);
 
   // Attach webcam stream to video element
   useEffect(() => {
@@ -202,14 +232,6 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
       videoRef.current.play().catch(() => {});
     }
   }, [controlMode, streamRef]);
-
-  // Floating feedback popups
-  const showFeedback = useCallback((text: string, x: number, y: number) => {
-    const id = ++feedbackIdRef.current;
-    const msg: FeedbackMsg = { id, text, x, y, ts: performance.now() };
-    setFeedbackMsgs((prev) => [...prev.slice(-3), msg]);
-    setTimeout(() => setFeedbackMsgs((prev) => prev.filter((m) => m.id !== id)), 1500);
-  }, []);
 
   // Mouse handlers (Mouse Preview Mode)
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -311,11 +333,36 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
               setIsPinching(result.isPinching);
               if (result.isPinching) sfx.playPinchEngage();
             }
+
+            // Open Palm Shield Detection (Challenge & Master difficulty only)
+            if (difficultyRef.current !== 'CASUAL') {
+              if (result.isOpenPalm) {
+                if (palmStartRef.current === 0) palmStartRef.current = now;
+                // Require stable pose for >= 320ms before triggering to prevent false positives
+                if (
+                  now - palmStartRef.current >= 320 &&
+                  now >= shieldCooldownUntilRef.current &&
+                  !isShieldActiveRef.current
+                ) {
+                  isShieldActiveRef.current = true;
+                  shieldExpiresAtRef.current = now + 3000; // 3.0s duration
+                  shieldCooldownUntilRef.current = now + 8500; // 8.5s cooldown
+                  setIsShieldActive(true);
+                  sfx.playShieldActivate();
+                  showFeedback(t('shieldActive'), smoothPosRef.current.x * 100, smoothPosRef.current.y * 100 - 10);
+                  palmStartRef.current = 0;
+                }
+              } else {
+                palmStartRef.current = 0;
+              }
+            }
+
             if (!handDetectedRef.current) {
               handDetectedRef.current = true;
               setHandDetected(true);
             }
           } else {
+            palmStartRef.current = 0;
             // Transient tracking drop
             latestLandmarksRef.current = null;
             // Grace period: only declare hand lost if missing for > 350ms
@@ -358,6 +405,12 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
         handDetectedRef.current ||
         now - lastTrackingSeenRef.current < 350;
 
+      // Expire shield
+      if (isShieldActiveRef.current && now > shieldExpiresAtRef.current) {
+        isShieldActiveRef.current = false;
+        setIsShieldActive(false);
+      }
+
       // 3. PHASE 1: ORBS COLLECTION
       if (gamePhaseRef.current === 'ORBS') {
         let hitGlitch = false;
@@ -382,13 +435,19 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
 
         if (hitGlitch) {
           lastGlitchHitRef.current = now;
-          sfx.playGlitchHit();
-          glitchHitsRef.current++;
-          onGlitchHitsUpdateRef.current(glitchHitsRef.current);
-          comboRef.current = 0;
-          setComboCount(0);
-          setShieldFlash(true);
-          setTimeout(() => setShieldFlash(false), 550);
+          if (isShieldActiveRef.current) {
+            // Deflected by Open Palm Shield!
+            sfx.playShieldBlock();
+            showFeedback(t('shieldBlocked'), cx, cy - 8);
+          } else {
+            sfx.playGlitchHit();
+            glitchHitsRef.current++;
+            onGlitchHitsUpdateRef.current(glitchHitsRef.current);
+            comboRef.current = 0;
+            setComboCount(0);
+            setShieldFlash(true);
+            setTimeout(() => setShieldFlash(false), 550);
+          }
         }
 
         // Sequential target tracking
@@ -796,6 +855,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
         x={cursorPos.x}
         y={cursorPos.y}
         isPinching={isPinching}
+        isShieldActive={isShieldActive}
         handDetected={handDetected}
         controlMode={controlMode}
         coreProgress={gamePhase === 'CORE' && coreHovering ? coreProgress : 0}

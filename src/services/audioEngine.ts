@@ -174,6 +174,38 @@ export class SoundEffects {
     });
   }
 
+  public playShieldActivate() {
+    this.play((ctx, now, vol) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.22);
+      gain.gain.setValueAtTime(0.18 * vol, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(now); osc.stop(now + 0.26);
+    });
+  }
+
+  public playShieldBlock() {
+    this.play((ctx, now, vol) => {
+      // Crisp metallic deflection chime
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc1.type = 'triangle';
+      osc2.type = 'sine';
+      osc1.frequency.setValueAtTime(880, now);
+      osc2.frequency.setValueAtTime(1760, now);
+      gain.gain.setValueAtTime(0.25 * vol, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination);
+      osc1.start(now); osc2.start(now);
+      osc1.stop(now + 0.36); osc2.stop(now + 0.36);
+    });
+  }
+
   public playVictoryFanfare() {
     this.play((ctx, now, vol) => {
       const chord = [523.25, 659.25, 783.99, 1046.5];
