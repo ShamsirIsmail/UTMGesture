@@ -32,6 +32,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { sfx } from '../services/audioEngine';
 import { detectHand } from '../services/mediapipe';
 import { DIFFICULTY_CONFIGS } from '../constants';
+import { getAssetUrl } from '../utils/assets';
 import type { DifficultyLevel, ControlMode, LandmarkPoint } from '../types';
 
 interface HowToPlayScreenProps {
@@ -183,7 +184,7 @@ export const HowToPlayScreen: React.FC<HowToPlayScreenProps> = ({
 
                   <div className="relative w-full h-24 sm:h-28 flex items-center justify-center my-1">
                     <img
-                      src="/asset/tutorial/index_point.png"
+                      src={getAssetUrl('/asset/tutorial/index_point.png')}
                       alt={t('gesturePointTitle')}
                       className="max-h-full max-w-full object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-200"
                       loading="eager"
@@ -207,7 +208,7 @@ export const HowToPlayScreen: React.FC<HowToPlayScreenProps> = ({
 
                   <div className="relative w-full h-24 sm:h-28 flex items-center justify-center my-1">
                     <img
-                      src="/asset/tutorial/pinch_boost.png"
+                      src={getAssetUrl('/asset/tutorial/pinch_boost.png')}
                       alt={t('gesturePinchTitle')}
                       className="max-h-full max-w-full object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-200"
                       loading="eager"
@@ -231,7 +232,7 @@ export const HowToPlayScreen: React.FC<HowToPlayScreenProps> = ({
 
                   <div className="relative w-full h-24 sm:h-28 flex items-center justify-center my-1">
                     <img
-                      src="/asset/tutorial/open_palm.png"
+                      src={getAssetUrl('/asset/tutorial/open_palm.png')}
                       alt={t('gesturePalmTitle')}
                       className="max-h-full max-w-full object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-200"
                       loading="eager"
@@ -266,7 +267,7 @@ export const HowToPlayScreen: React.FC<HowToPlayScreenProps> = ({
                 <div className="flex flex-col p-3 rounded-2xl bg-stone-50/80 border border-stone-200/90 relative">
                   <div className="w-full h-18 sm:h-20 rounded-xl bg-stone-900/5 flex items-center justify-center overflow-hidden mb-2 p-1.5">
                     <img
-                      src="/asset/game/energy_orb_blue.png"
+                      src={getAssetUrl('/asset/game/energy_orb_blue.png')}
                       alt=""
                       className="h-12 w-12 sm:h-14 sm:w-14 object-contain drop-shadow-md animate-pulse"
                     />
@@ -286,7 +287,7 @@ export const HowToPlayScreen: React.FC<HowToPlayScreenProps> = ({
                 <div className="flex flex-col p-3 rounded-2xl bg-stone-50/80 border border-stone-200/90 relative">
                   <div className="w-full h-18 sm:h-20 rounded-xl bg-stone-900/5 flex items-center justify-center overflow-hidden mb-2 p-1.5">
                     <img
-                      src="/asset/game/future_core.png"
+                      src={getAssetUrl('/asset/game/future_core.png')}
                       alt=""
                       className="h-12 w-12 sm:h-14 sm:w-14 object-contain drop-shadow-md"
                     />
@@ -306,7 +307,7 @@ export const HowToPlayScreen: React.FC<HowToPlayScreenProps> = ({
                 <div className="flex flex-col p-3 rounded-2xl bg-stone-50/80 border border-stone-200/90 relative">
                   <div className="w-full h-18 sm:h-20 rounded-xl bg-amber-500/5 flex items-center justify-center overflow-hidden mb-2 p-1.5">
                     <img
-                      src="/asset/medals/gold.png"
+                      src={getAssetUrl('/asset/medals/gold.png')}
                       alt=""
                       className="h-12 w-12 sm:h-14 sm:w-14 object-contain drop-shadow-md"
                     />

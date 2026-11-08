@@ -4,6 +4,7 @@
 // ============================================================
 
 import React, { useState } from 'react';
+import { getAssetUrl } from '../utils/assets';
 
 interface LogoItem {
   id: string;
@@ -19,7 +20,7 @@ const OFFICIAL_LOGOS: LogoItem[] = [
     id: 'utm',
     name: 'UTM',
     sub: 'UNIVERSITI TEKNOLOGI MALAYSIA',
-    src: '/asset/logo/utm_logo.png',
+    src: getAssetUrl('/asset/logo/utm_logo.png'),
     badgeText: 'UTM',
     isWide: true,
   },
@@ -27,28 +28,28 @@ const OFFICIAL_LOGOS: LogoItem[] = [
     id: 'ascend',
     name: 'ASCEND UTM',
     sub: 'INNOVATION & COMMUNITY',
-    src: '/asset/logo/ascend_utm.png',
+    src: getAssetUrl('/asset/logo/ascend_utm.png'),
     badgeText: 'ASCEND',
   },
   {
     id: 'ksj',
     name: 'KSJ',
     sub: 'KELAB SAHABAT JAYA',
-    src: '/asset/logo/KSJ.png',
+    src: getAssetUrl('/asset/logo/KSJ.png'),
     badgeText: 'KSJ',
   },
   {
     id: 'jkm_ksj',
     name: 'JKM KSJ',
     sub: 'KEBAJIKAN MAHASISWA KSJ',
-    src: '/asset/logo/jkm_ksj.png',
+    src: getAssetUrl('/asset/logo/jkm_ksj.png'),
     badgeText: 'JKM KSJ',
   },
   {
     id: 'jkm_lk',
     name: 'JKM LK',
     sub: 'KEBAJIKAN MAHASISWA LK',
-    src: '/asset/logo/jkm_lk.png',
+    src: getAssetUrl('/asset/logo/jkm_lk.png'),
     badgeText: 'JKM LK',
   },
 ];

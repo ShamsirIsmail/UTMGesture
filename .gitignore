@@ -1,5 +1,57 @@
-node_modules
-dist
-.system_generated
-.chrome-data
+# ============================================================
+# UTM Gesture Quest — Git Ignore Rules
+# ============================================================
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build outputs
+dist/
+build/
+out/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.pem
+*.key
+
+# Editor & OS artifacts
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Test artifacts, reports, and diagnostic traces
+playwright-report/
+test-results/
+.chrome-data/
 *.log
+*.tmp
+*.webm
+test_diag.cjs
+
+# Participant Data Privacy & Local Exports
+# NEVER commit participant names, photos, or raw exhibition data to Git
+leaderboard-export*.json
+leaderboard-export*.csv
+*.export.json
+*.export.csv
+exports/
+private/
+
+# Antigravity system generated
+.system_generated/

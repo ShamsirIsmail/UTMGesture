@@ -18,6 +18,10 @@ import {
   Key,
   Volume2,
   Bug,
+  Download,
+  FileSpreadsheet,
+  FileCode,
+  Info,
 } from 'lucide-react';
 import { useTranslation } from '../i18n/useTranslation';
 import {
@@ -26,6 +30,9 @@ import {
   deleteEntryPhoto,
   clearAllLeaderboard,
   getTotalEntriesCount,
+  exportLeaderboardJson,
+  exportLeaderboardCsv,
+  downloadExportFile,
 } from '../services/leaderboardDb';
 import { sfx } from '../services/audioEngine';
 import { voice } from '../services/voiceGuidance';
@@ -71,6 +78,11 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
   const [confirmClear, setConfirmClear] = useState(false);
   const [newPin, setNewPin] = useState('');
   const [pinChangeSuccess, setPinChangeSuccess] = useState(false);
+
+  // Data Export settings
+  const [includePhotosInExport, setIncludePhotosInExport] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportSuccessMsg, setExportSuccessMsg] = useState<string | null>(null);
 
   // Voice & SFX diagnostics and controls
   const [installedVoices, setInstalledVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -161,6 +173,51 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
     loadData();
   };
 
+  const handleExportCsv = async () => {
+    try {
+      setIsExporting(true);
+      sfx.playClick();
+      const csv = await exportLeaderboardCsv();
+      const dateStr = new Date().toISOString().slice(0, 10);
+      downloadExportFile(csv, `utm_gesture_leaderboard_${dateStr}.csv`, 'text/csv;charset=utf-8;');
+      setExportSuccessMsg(
+        language === 'bm'
+          ? 'Eksport CSV berjaya dimuat turun!'
+          : 'CSV export downloaded successfully!'
+      );
+      setTimeout(() => setExportSuccessMsg(null), 3000);
+    } catch (err) {
+      console.error('Failed to export CSV:', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportJson = async () => {
+    try {
+      setIsExporting(true);
+      sfx.playClick();
+      const json = await exportLeaderboardJson({ includePhotos: includePhotosInExport });
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const photoSuffix = includePhotosInExport ? '_with_photos' : '_sanitized';
+      downloadExportFile(
+        json,
+        `utm_gesture_leaderboard_${dateStr}${photoSuffix}.json`,
+        'application/json'
+      );
+      setExportSuccessMsg(
+        language === 'bm'
+          ? 'Eksport JSON berjaya dimuat turun!'
+          : 'JSON export downloaded successfully!'
+      );
+      setTimeout(() => setExportSuccessMsg(null), 3000);
+    } catch (err) {
+      console.error('Failed to export JSON:', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fadeIn">
       <div className="w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl shadow-exhibition-lg border border-stone-200 flex flex-col overflow-hidden">
@@ -180,6 +237,7 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
             </div>
           </div>
           <button
+            data-testid="close-operator-modal"
             onClick={() => {
               sfx.playClick();
               onClose();
@@ -499,6 +557,95 @@ export const OperatorModal: React.FC<OperatorModalProps> = ({
                     : 'Operator PIN successfully updated!'}
                 </p>
               )}
+            </div>
+
+            {/* Export & Data Privacy Management */}
+            <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+              <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-stone-900">
+                  <Download className="w-4 h-4 text-[#7a1636]" />
+                  <span>
+                    {language === 'bm'
+                      ? 'Eksport Data Papan Skor (Petugas Sahaja)'
+                      : 'Export Leaderboard Data (Operator Only)'}
+                  </span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-stone-200 font-mono text-stone-700">
+                  {totalCount} {language === 'bm' ? 'Rekod' : 'Records'}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleExportCsv}
+                  disabled={isExporting || totalCount === 0}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5" />
+                  <span>
+                    {language === 'bm' ? 'Eksport CSV (Privasi)' : 'Export CSV (Privacy-safe)'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleExportJson}
+                  disabled={isExporting || totalCount === 0}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#7a1636] hover:bg-[#62102b] disabled:opacity-50 text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+                >
+                  <FileCode className="w-3.5 h-3.5" />
+                  <span>{language === 'bm' ? 'Eksport JSON' : 'Export JSON'}</span>
+                </button>
+
+                <label className="flex items-center gap-2 text-[11px] text-stone-600 cursor-pointer ml-auto select-none">
+                  <input
+                    type="checkbox"
+                    checked={includePhotosInExport}
+                    onChange={(e) => setIncludePhotosInExport(e.target.checked)}
+                    className="rounded border-stone-300 text-[#7a1636] focus:ring-[#7a1636]"
+                  />
+                  <span>
+                    {language === 'bm'
+                      ? 'Sertakan foto peserta (JSON)'
+                      : 'Include photos in JSON'}
+                  </span>
+                </label>
+              </div>
+
+              {exportSuccessMsg && (
+                <p className="text-[11px] text-emerald-700 font-bold animate-fadeIn">
+                  ✓ {exportSuccessMsg}
+                </p>
+              )}
+
+              {/* Data Isolation & Privacy Notice */}
+              <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[10.5px] text-amber-900 space-y-1">
+                <div className="flex items-start gap-1.5">
+                  <Info className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">
+                    <strong>
+                      {language === 'bm'
+                        ? 'Penyimpanan Setempat (IndexedDB):'
+                        : 'Local Storage (IndexedDB):'}
+                    </strong>{' '}
+                    {language === 'bm'
+                      ? 'Data tersimpan dalam pelayar pada peranti ini sahaja (Origin Isolated). Sesi localhost tidak bersinkronisasi ke peranti lain atau GitHub Pages.'
+                      : 'Data is strictly stored inside this browser origin. Localhost sessions do not sync across devices or to GitHub Pages.'}
+                  </p>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <Shield className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">
+                    <strong>
+                      {language === 'bm' ? 'Pematuhan Privasi:' : 'Privacy Compliance:'}
+                    </strong>{' '}
+                    {language === 'bm'
+                      ? 'Foto peserta adalah sulit. Jangan komit atau muat naik fail eksport yang mengandungi gambar ke repositori GitHub awam.'
+                      : 'Participant photos are private. Never commit or push exported files containing photos to public repositories.'}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Leaderboard Management */}

@@ -29,6 +29,8 @@ export async function loadMediaPipeModules(): Promise<void> {
   FilesetResolver = module.FilesetResolver;
 }
 
+import { getAssetUrl } from '../utils/assets';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let handLandmarkerInstance: any = null;
 
@@ -37,10 +39,11 @@ export async function createHandLandmarker(): Promise<void> {
 
   await loadMediaPipeModules();
 
-  // Try local WASM first, fall back to CDN if not available
+  // Try local WASM first (respects Vite base path), fall back to CDN if not available
+  const localWasmPath = getAssetUrl('/mediapipe-wasm');
   let vision;
   try {
-    vision = await FilesetResolver.forVisionTasks('/mediapipe-wasm');
+    vision = await FilesetResolver.forVisionTasks(localWasmPath);
   } catch {
     // Fallback: use CDN WASM (requires internet)
     vision = await FilesetResolver.forVisionTasks(
@@ -48,8 +51,8 @@ export async function createHandLandmarker(): Promise<void> {
     );
   }
 
-  // Try local model first, fall back to CDN
-  let modelAssetPath = '/models/hand_landmarker.task';
+  // Try local model first (respects Vite base path), fall back to CDN
+  let modelAssetPath = getAssetUrl('/models/hand_landmarker.task');
   try {
     const res = await fetch(modelAssetPath, { method: 'HEAD' });
     if (!res.ok) throw new Error('Local model not found');

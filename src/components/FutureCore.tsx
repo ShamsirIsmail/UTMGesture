@@ -5,6 +5,7 @@
 // ============================================================
 
 import React, { useState } from 'react';
+import { getAssetUrl } from '../utils/assets';
 import { CORE_X_PCT, CORE_Y_PCT, CORE_HIT_RADIUS_PCT } from '../constants';
 import { useTranslation } from '../i18n/useTranslation';
 
@@ -148,7 +149,7 @@ export const FutureCore: React.FC<FutureCoreProps> = ({
       >
         {!imageFailed ? (
           <img
-            src="/asset/game/future_core.png"
+            src={getAssetUrl('/asset/game/future_core.png')}
             alt=""
             onError={() => setImageFailed(true)}
             className="w-20 h-20 object-contain select-none"

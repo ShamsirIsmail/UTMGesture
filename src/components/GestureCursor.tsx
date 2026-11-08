@@ -5,6 +5,7 @@
 // ============================================================
 
 import React, { useState } from 'react';
+import { getAssetUrl } from '../utils/assets';
 
 interface GestureCursorProps {
   x: number; // 0..1 normalized
@@ -48,7 +49,7 @@ export const GestureCursor: React.FC<GestureCursorProps> = ({
       {!imageFailed ? (
         <div className="relative flex items-center justify-center">
           <img
-            src="/asset/game/gesture_cursor.png"
+            src={getAssetUrl('/asset/game/gesture_cursor.png')}
             alt=""
             onError={() => setImageFailed(true)}
             className={`w-14 h-14 object-contain transition-transform duration-100 ${
