@@ -349,7 +349,7 @@ function AppContent() {
       />
 
       {/* Main Screen Router */}
-      <main className="relative flex-1 overflow-hidden">
+      <main className="relative flex-1 min-h-0 overflow-hidden">
         {screen === 'WELCOME' && (
           <WelcomeScreen
             controlMode={controlMode}
