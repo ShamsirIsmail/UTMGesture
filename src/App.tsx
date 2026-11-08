@@ -213,6 +213,17 @@ function AppContent() {
     setScreen('GAMEPLAY');
   }, []);
 
+  const startNextLevel = useCallback((nextDiff: DifficultyLevel) => {
+    console.log('[App] startNextLevel called with:', nextDiff);
+    sfx.playClick();
+    setDifficulty(nextDiff);
+    setElapsed(0);
+    setGlitchHits(0);
+    setMaxCombo(0);
+    setGameRound((r) => r + 1);
+    setScreen('GAMEPLAY');
+  }, []);
+
   const openLeaderboard = useCallback(() => {
     setPreviousScreen(screen);
     setScreen('LEADERBOARD');
@@ -411,7 +422,8 @@ function AppContent() {
             glitchHits={glitchHits}
             maxCombo={maxCombo}
             controlMode={controlMode}
-            onPlayAgain={() => setScreen('GAMEPLAY')}
+            onPlayAgain={startGame}
+            onStartNextLevel={startNextLevel}
             onHome={goHome}
             onOpenLeaderboard={openLeaderboard}
             streamRef={streamRef}

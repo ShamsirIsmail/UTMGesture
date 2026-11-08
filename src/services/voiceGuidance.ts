@@ -275,6 +275,15 @@ class VoiceGuidanceService {
     this.speakRaw(VOICE_SCRIPTS.COMPLETION[lang], lang);
   }
 
+  /** Level unlocked announcement */
+  public speakLevelUnlocked(diff: string, lang: Language) {
+    if (diff === 'CHALLENGE') {
+      this.speakRaw(lang === 'bm' ? 'Tahap Cabaran dibuka!' : 'Challenge level unlocked!', lang);
+    } else if (diff === 'MASTER') {
+      this.speakRaw(lang === 'bm' ? 'Tahap Pakar AI dibuka!' : 'Master AI level unlocked!', lang);
+    }
+  }
+
   /** Leaderboard submission */
   public speakLeaderboard(lang: Language) {
     const now = performance.now();
