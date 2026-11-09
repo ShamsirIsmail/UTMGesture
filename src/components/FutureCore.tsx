@@ -34,6 +34,7 @@ export const FutureCore: React.FC<FutureCoreProps> = ({
 
   return (
     <div
+      data-testid="future-core"
       className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 z-15"
       style={{ left: `${CORE_X_PCT}%`, top: `${CORE_Y_PCT}%` }}
     >

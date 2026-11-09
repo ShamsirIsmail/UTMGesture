@@ -659,7 +659,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
   return (
     <div
       ref={playfieldRef}
-      className="relative w-full h-full bg-gameplay-light overflow-hidden cursor-none select-none"
+      className="relative w-full h-full bg-gameplay-light overflow-hidden cursor-none select-none touch-none"
       onMouseMove={handleMouseMove}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
@@ -735,10 +735,10 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
 
       {/* ZONE C: Compact Progress Display (Top-Right) */}
       <div className="absolute top-3 sm:top-4 right-3 sm:right-5 z-20 flex items-center gap-1.5 sm:gap-2 pointer-events-none safe-area-pr">
-        {/* Debug indicator button */}
+        {/* Debug indicator button (hidden on mobile landscape via hud-hide-short) */}
         <button
           onClick={() => setDebugMode(!debugMode)}
-          className={`pointer-events-auto hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer ${
+          className={`hud-hide-short pointer-events-auto hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border transition-colors cursor-pointer ${
             debugMode
               ? 'bg-amber-500 text-white border-amber-400 shadow-xs'
               : 'bg-white/90 border-stone-200 text-stone-600 hover:bg-stone-100'

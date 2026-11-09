@@ -57,6 +57,28 @@
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
+
+  /* Mobile landscape & compact HUD visibility based on height & screen size */
+  @media (max-height: 560px), (max-width: 767px) {
+    .hud-mobile-compact {
+      display: flex !important;
+    }
+    .hud-desktop-card {
+      display: none !important;
+    }
+    .hud-hide-short {
+      display: none !important;
+    }
+  }
+
+  @media (min-height: 561px) and (min-width: 768px) {
+    .hud-mobile-compact {
+      display: none !important;
+    }
+    .hud-desktop-card {
+      display: block !important;
+    }
+  }
 }
 
 /* ============================================================

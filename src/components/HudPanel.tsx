@@ -135,8 +135,8 @@ export const HudPanel: React.FC<HudPanelProps> = ({
 
   return (
     <>
-      {/* 1. Mobile Compact HUD Bar (Screens under md / Mobile Landscape) */}
-      <div className="absolute left-3 top-3 z-20 md:hidden flex items-center gap-1.5 pointer-events-auto safe-area-pl">
+      {/* 1. Mobile Compact HUD Bar (Height < 560px or Width < 768px / Mobile Landscape) */}
+      <div className="hud-mobile-compact absolute left-3 top-3 z-20 items-center gap-1.5 pointer-events-auto safe-area-pl">
         {/* Tracking Status Pill */}
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 border border-stone-200/90 shadow-xs backdrop-blur-md">
           <span
@@ -166,8 +166,8 @@ export const HudPanel: React.FC<HudPanelProps> = ({
         )}
       </div>
 
-      {/* 2. Desktop & Tablet Full HUD Panel (Screens md and above) */}
-      <div className="absolute left-4 top-4 z-20 hidden md:block w-48 sm:w-56 rounded-2xl bg-white/95 border border-stone-200/90 p-2.5 shadow-exhibition backdrop-blur-md safe-area-pl">
+      {/* 2. Desktop & Tablet Full HUD Panel (Height >= 561px and Width >= 768px) */}
+      <div className="hud-desktop-card absolute left-4 top-4 z-20 w-48 sm:w-56 rounded-2xl bg-white/95 border border-stone-200/90 p-2.5 shadow-exhibition backdrop-blur-md safe-area-pl">
         {/* Header with Camera status */}
         <div className="flex items-center justify-between mb-1.5 px-0.5">
           <div className="flex items-center gap-1.5">

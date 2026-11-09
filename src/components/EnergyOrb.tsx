@@ -131,6 +131,7 @@ export const EnergyOrb: React.FC<EnergyOrbProps> = ({
 
   return (
     <div
+      data-testid={`energy-orb-${id}`}
       className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 z-10"
       style={{ left: `${x}%`, top: `${y}%` }}
     >

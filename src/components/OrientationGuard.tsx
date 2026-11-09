@@ -34,27 +34,44 @@ export const OrientationGuard: React.FC<OrientationGuardProps> = ({
       const height = window.innerHeight;
       const isPortraitAspect = height > width;
 
-      // Detect if this is a smartphone or tablet screen in portrait
-      // Includes touch devices or viewports typical of mobile/tablet devices (width <= 1024)
-      const isTouch =
+      if (!isPortraitAspect) {
+        // Landscape orientation: allow through
+        setIsPortrait(false);
+        if (wasSuspendedDuringGameplay) {
+          setShowResumptionDialog(true);
+        }
+        return;
+      }
+
+      // We are in portrait aspect (height > width)
+      // Check device characteristics:
+      const hasTouch =
         typeof window !== 'undefined' &&
         ('ontouchstart' in window ||
           navigator.maxTouchPoints > 0 ||
           window.matchMedia('(pointer: coarse)').matches);
 
-      const isMobileViewport = width <= 1024;
-      const shouldBlock = isPortraitAspect && (isTouch || isMobileViewport);
+      const isMobileOrTabletUA =
+        typeof navigator !== 'undefined' &&
+        (/Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+
+      // Pure desktop browser with fine mouse pointer and no touch capability
+      const isPureDesktopMouse =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(pointer: fine)').matches &&
+        !hasTouch &&
+        !isMobileOrTabletUA;
+
+      // Block portrait on phones and tablets of any size (including large tablets > 1024px width in portrait),
+      // while preventing false positive blocks on desktop PC browser resizing with a mouse.
+      const shouldBlock = isPortraitAspect && !isPureDesktopMouse && (hasTouch || isMobileOrTabletUA);
 
       setIsPortrait(shouldBlock);
 
       // If rotating into portrait during active gameplay, suspend and flag
       if (shouldBlock && isGameplay) {
         setWasSuspendedDuringGameplay(true);
-      }
-
-      // If returning to landscape after being suspended during gameplay
-      if (!shouldBlock && wasSuspendedDuringGameplay) {
-        setShowResumptionDialog(true);
       }
     };
 
@@ -257,3 +274,4 @@ export const OrientationGuard: React.FC<OrientationGuardProps> = ({
     </>
   );
 };
+
